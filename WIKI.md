@@ -61,18 +61,60 @@ Trip Planner is a web application that helps Vietnamese users create, customize,
 
 ![Business Canvas](images/businesscanva.png)
 
-| Block | Description |
-|-------|-------------|
-| **Key Partners** | Data sources (Google Maps, Foody, Booking), future booking platforms, cloud providers (Pinecone, Tavily) |
-| **Key Activities** | Data crawling & curation, AI model tuning, product development, user support |
-| **Key Resources** | Vietnamese travel dataset, AI agents (Suggest, Plan, Review), web app (React + Go) |
-| **Value Propositions** | Faster planning, group-friendly collaboration, expense splitting, Vietnam-optimized recommendations |
-| **Customer Relationships** | Self-service web app, feedback loops via comments, future community features |
-| **Channels** | Web app, social media, word-of-mouth, university/assignment demos |
-| **Customer Segments** | Vietnamese travelers (individuals & groups), especially those planning domestic trips |
-| **Cost Structure** | Development time, API costs (Pinecone, Tavily, maps), hosting, data storage |
-| **Revenue Streams** | Free MVP; future: affiliate/booking commissions, premium features, B2B API |
+1 Customers / Users
+Domestic travel for Vietnamese
+Friend groups, families, students trips 
+Travelers want quick, convenient plans
 
+2 Value
+Fast-planning using AI
+Recommending for optimized Vietnam tours
+Scheduling - cooperate - splitting bill equally in one app
+Sharing expenses fairly and automatically
+
+3 Channels
+Web app (MVP)
+Mobile app (Future)
+Social medias, sharing through friends
+Demo in schools, university and student communities
+
+4 Advantage
+Detailed data for Vietnam tours
+Smart AI schedulers
+Expenses sharing(Few competitors support)
+Support for group planning
+
+5 Revenue
+Commission for booking / affiliate
+Premium packs
+API/B2B in future
+Sponsors
+
+6 Metrics
+Amount of created plans
+Monthly active users (MAU)
+Ratio of group plan sharing
+Ratio of expenses allocate-sharing features
+Ratio of reusing the app
+
+7 Solutions
+AI scheduling
+Collaboration & comment depend on activities
+Scheduling management daily
+Monitoring and expense sharing
+
+8 Problems
+Time consuming information gathering
+Multiple discrete apps
+Difficulty in reaching an agreement
+Manual bill splitting post-trip
+
+9 Costs
+Server & Data storage(Database)
+AI/API fees
+Gathering and update data
+Maintain and develop system
+Marketing (Future)
 ---
 
 ## 4. MVP Features
