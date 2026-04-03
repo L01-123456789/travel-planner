@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - Ứng dụng Lập Lịch Trình Du Lịch Thông Minh</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+
+        /* Phone mockup */
+        .phone-mockup {
+            width: 280px;
+            height: 580px;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3), 0 0 0 2px #333;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 28px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 10;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-screen-inner {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .phone-screen-inner::-webkit-scrollbar { display: none; }
+
+        /* Gradient backgrounds */
+        .hero-gradient {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 30%, #fff 70%);
+        }
+        .section-gradient {
+            background: linear-gradient(180deg, #f8faf9 0%, #fff 100%);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .float-1 { animation: float 6s ease-in-out infinite; }
+        .float-2 { animation: floatSlow 7s ease-in-out infinite 1s; }
+        .float-3 { animation: float 8s ease-in-out infinite 2s; }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .animate-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .animate-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Feature card hover */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(22, 101, 52, 0.15);
+        }
+
+        /* Phone carousel */
+        .phone-carousel {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            padding: 20px 0;
+        }
+        .phone-carousel::-webkit-scrollbar { display: none; }
+        .phone-carousel .phone-mockup { scroll-snap-align: center; }
+
+        /* Stat counter */
+        .stat-number {
+            background: linear-gradient(135deg, #166534, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* CTA button */
+        .cta-btn {
+            background: linear-gradient(135deg, #166534 0%, #15803d 50%, #22c55e 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            transition: all 0.3s ease;
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(22, 101, 52, 0.4);
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Navbar scroll effect */
+        .navbar-scrolled {
+            background: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        /* Progress ring */
+        .progress-ring-circle {
+            transition: stroke-dashoffset 2s ease-in-out;
+        }
+
+        /* Testimonial cards */
+        .testimonial-card {
+            transition: all 0.3s ease;
+        }
+        .testimonial-card:hover {
+            transform: scale(1.02);
+        }
+
+        /* Screen content styles */
+        .screen-content { font-size: 11px; line-height: 1.4; }
+        .screen-content h3 { font-size: 14px; }
+        .screen-content h4 { font-size: 12px; }
+        .screen-content .text-xs { font-size: 9px; }
+
+        /* Decorative elements */
+        .blob-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+        }
+        .blob-2 {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(22,101,52,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(30px);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 40px;
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-green-700 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-route text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-bold text-green-800">TravelMate</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-gray-600 hover:text-green-700 transition font-medium text-sm">Tính năng</a>
+                <a href="#how-it-works" class="text-gray-600 hover:text-green-700 transition font-medium text-sm">Cách hoạt động</a>
+                <a href="#screens" class="text-gray-600 hover:text-green-700 transition font-medium text-sm">Giao diện</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-green-700 transition font-medium text-sm">Đánh giá</a>
+                <a href="#download" class="cta-btn text-white px-6 py-2.5 rounded-full font-semibold text-sm">Tải ngay</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-gray-700 text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-lg border-t">
+            <div class="px-6 py-4 flex flex-col gap-4">
+                <a href="#features" class="text-gray-600 hover:text-green-700 font-medium">Tính năng</a>
+                <a href="#how-it-works" class="text-gray-600 hover:text-green-700 font-medium">Cách hoạt động</a>
+                <a href="#screens" class="text-gray-600 hover:text-green-700 font-medium">Giao diện</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-green-700 font-medium">Đánh giá</a>
+                <a href="#download" class="cta-btn text-white px-6 py-3 rounded-full font-semibold text-center">Tải ngay</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="blob-1 top-20 -left-40"></div>
+        <div class="blob-2 bottom-10 right-10"></div>
+        <div class="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Left content -->
+            <div class="space-y-8" style="animation: fadeInUp 1s ease forwards">
+                <div class="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+                    <i class="fas fa-sparkles"></i>
+                    Hỗ trợ bởi AI thông minh
+                </div>
+                <h1 class="text-5xl lg:text-6xl font-black leading-tight text-gray-900">
+                    Lên lịch trình
+                    <span class="text-green-700">du lịch</span>
+                    <br>chỉ trong
+                    <span class="relative inline-block">
+                        <span class="text-green-600">vài phút</span>
+                        <svg class="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8">
+                            <path d="M0 6 Q50 0 100 4 Q150 8 200 2" stroke="#22c55e" stroke-width="3" fill="none"/>
+                        </svg>
+                    </span>
+                </h1>
+                <p class="text-lg text-gray-600 max-w-lg leading-relaxed">
+                    TravelMate giúp bạn tạo lịch trình du lịch hoàn hảo, quản lý ngân sách chi tiết, 
+                    và khám phá những trải nghiệm tuyệt vời nhất tại mọi điểm đến.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#download" class="cta-btn text-white px-8 py-4 rounded-full font-bold text-lg flex items-center gap-3 shadow-lg">
+                        <i class="fab fa-google-play"></i>
+                        Tải miễn phí
+                    </a>
+                    <a href="#how-it-works" class="bg-white border-2 border-green-200 text-green-700 px-8 py-4 rounded-full font-bold text-lg flex items-center gap-3 hover:bg-green-50 transition">
+                        <i class="fas fa-play-circle"></i>
+                        Xem demo
+                    </a>
+                </div>
+                <div class="flex items-center gap-6 pt-4">
+                    <div class="flex -space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-green-200 border-2 border-white flex items-center justify-center text-xs font-bold text-green-800">T</div>
+                        <div class="w-10 h-10 rounded-full bg-emerald-300 border-2 border-white flex items-center justify-center text-xs font-bold text-green-800">H</div>
+                        <div class="w-10 h-10 rounded-full bg-green-400 border-2 border-white flex items-center justify-center text-xs font-bold text-white">M</div>
+                        <div class="w-10 h-10 rounded-full bg-green-600 border-2 border-white flex items-center justify-center text-xs font-bold text-white">A</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1 text-yellow-500">
+                            <i class="fas fa-star text-sm"></i><i class="fas fa-star text-sm"></i><i class="fas fa-star text-sm"></i><i class="fas fa-star text-sm"></i><i class="fas fa-star-half-alt text-sm"></i>
+                        </div>
+                        <p class="text-sm text-gray-500">50,000+ người dùng tin tưởng</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right - Phone mockups -->
+            <div class="flex justify-center items-center gap-6 relative" style="animation: fadeInUp 1s ease 0.3s forwards; opacity: 0;">
+                <!-- Main phone -->
+                <div class="phone-mockup float-1" style="width: 290px; height: 600px;">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content">
+                            <!-- Home Screen -->
+                            <div class="p-4 pt-10">
+                                <div class="flex items-center bg-gray-100 rounded-full px-4 py-3 mb-4">
+                                    <i class="fas fa-search text-gray-400 mr-2" style="font-size:12px"></i>
+                                    <span class="text-gray-400" style="font-size:12px">Bạn muốn đi đâu?</span>
+                                </div>
+                                <div class="bg-gradient-to-br from-green-800 to-green-600 rounded-2xl p-4 mb-4 text-white">
+                                    <div class="flex items-start gap-3 mb-2">
+                                        <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-user text-white" style="font-size:14px"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold" style="font-size:13px">Tùy chỉnh lịch trình thông minh</p>
+                                            <p style="font-size:10px" class="opacity-80 mt-1">Lên kế hoạch hoàn hảo chỉ trong vài phút với AI.</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-white text-green-800 px-4 py-2 rounded-full font-bold mt-2" style="font-size:11px">Khám phá ngay</button>
+                                </div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <p class="text-green-700 font-bold" style="font-size:9px">GỢI Ý CHO BẠN</p>
+                                        <p class="font-bold" style="font-size:14px">Khám phá địa điểm phổ biến</p>
+                                    </div>
+                                    <span class="text-green-700 font-medium" style="font-size:10px">Xem tất cả</span>
+                                </div>
+                                <div class="flex gap-3 overflow-hidden">
+                                    <div class="flex-shrink-0" style="width:160px">
+                                        <div class="relative rounded-xl overflow-hidden mb-2" style="height:100px">
+                                            <div class="w-full h-full bg-gradient-to-br from-amber-200 to-red-300 flex items-center justify-center">
+                                                <i class="fas fa-landmark text-red-800 text-3xl"></i>
+                                            </div>
+                                            <div class="absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                <i class="fas fa-star text-yellow-500" style="font-size:8px"></i>
+                                                <span style="font-size:9px" class="font-bold">4.8</span>
+                                            </div>
+                                        </div>
+                                        <p class="font-bold" style="font-size:12px">Hà Nội</p>
+                                        <p class="text-gray-500" style="font-size:9px">Thủ đô nghìn năm văn hiến</p>
+                                        <div class="flex items-center justify-between mt-1">
+                                            <span class="text-gray-400" style="font-size:8px"><i class="fas fa-map-marker-alt"></i> Miền Bắc</span>
+                                            <span class="text-green-700 font-bold" style="font-size:9px">Tìm hiểu</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0" style="width:160px">
+                                        <div class="relative rounded-xl overflow-hidden mb-2" style="height:100px">
+                                            <div class="w-full h-full bg-gradient-to-br from-blue-200 to-cyan-300 flex items-center justify-center">
+                                                <i class="fas fa-mountain text-blue-800 text-3xl"></i>
+                                            </div>
+                                            <div class="absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                <i class="fas fa-star text-yellow-500" style="font-size:8px"></i>
+                                                <span style="font-size:9px" class="font-bold">4.7</span>
+                                            </div>
+                                        </div>
+                                        <p class="font-bold" style="font-size:12px">Đà Nẵng</p>
+                                        <p class="text-gray-500" style="font-size:9px">Thành phố đáng sống</p>
+                                    </div>
+                                </div>
+                                <div class="mt-5">
+                                    <p class="font-bold mb-3" style="font-size:14px">Trải nghiệm đặc sắc</p>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="bg-gray-50 rounded-xl p-3 flex flex-col items-center">
+                                            <i class="fas fa-utensils text-green-700 text-lg mb-1"></i>
+                                            <span style="font-size:10px" class="font-medium">Ẩm thực</span>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-xl p-3 flex flex-col items-center">
+                                            <i class="fas fa-hiking text-green-700 text-lg mb-1"></i>
+                                            <span style="font-size:10px" class="font-medium">Khám phá</span>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-xl p-3 flex flex-col items-center">
+                                            <i class="fas fa-hotel text-green-700 text-lg mb-1"></i>
+                                            <span style="font-size:10px" class="font-medium">Lưu trú</span>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-xl p-3 flex flex-col items-center">
+                                            <i class="fas fa-camera text-green-700 text-lg mb-1"></i>
+                                            <span style="font-size:10px" class="font-medium">Nghệ thuật</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary phone - partially visible -->
+                <div class="phone-mockup float-2 hidden lg:block" style="width: 260px; height: 540px; opacity: 0.9;">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content">
+                            <!-- Itinerary Screen -->
+                            <div class="pt-10">
+                                <div class="relative rounded-b-3xl overflow-hidden mx-0" style="height:180px">
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-end p-4">
+                                        <div class="text-white">
+                                            <p style="font-size:9px" class="opacity-70 tracking-widest mb-1">ĐIỂM ĐẾN</p>
+                                            <p class="font-black" style="font-size:20px">Hà Nội Hoài Cổ</p>
+                                            <p style="font-size:10px" class="opacity-80 mt-1"><i class="far fa-calendar mr-1"></i> 15 Thg 10 - 18 Thg 10</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <div class="bg-gray-50 rounded-2xl p-4 mb-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <p class="text-green-700 font-bold" style="font-size:9px; letter-spacing:1px">TỔNG NGÂN SÁCH</p>
+                                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold" style="font-size:9px">Hợp lý</span>
+                                        </div>
+                                        <p class="font-black text-2xl mb-2">12.500.000đ</p>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-gray-500" style="font-size:10px">Đã chi tiêu</span>
+                                            <span class="font-bold text-green-700" style="font-size:11px">8.240.000đ</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                            <div class="bg-gradient-to-r from-green-500 to-emerald-400 h-2 rounded-full" style="width:65%"></div>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-400" style="font-size:8px">65% HOÀN THÀNH</span>
+                                            <span class="text-gray-400" style="font-size:8px">CÒN LẠI: 4.260.000đ</span>
+                                        </div>
+                                    </div>
+                                    <!-- Day tabs -->
+                                    <div class="flex gap-2 mb-4 overflow-x-auto">
+                                        <span class="bg-green-700 text-white px-4 py-1.5 rounded-full font-bold whitespace-nowrap" style="font-size:11px">Ngày 1</span>
+                                        <span class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full font-medium whitespace-nowrap" style="font-size:11px">Ngày 2</span>
+                                        <span class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded-full font-medium whitespace-nowrap" style="font-size:11px">Ngày 3</span>
+                                    </div>
+                                    <!-- Activity -->
+                                    <div class="bg-white border border-gray-100 rounded-2xl p-3 mb-3 shadow-sm">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <div class="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-sun text-yellow-500" style="font-size:10px"></i>
+                                            </div>
+                                            <span class="text-gray-400 font-medium" style="font-size:9px; letter-spacing:1px">SÁNG SỚM • 08:30</span>
+                                        </div>
+                                        <p class="font-bold" style="font-size:13px">Phở Bát Đàn & Cà Phê Trứng</p>
+                                        <p class="text-gray-400" style="font-size:9px"><i class="fas fa-map-marker-alt mr-1"></i> 49 Bát Đàn, Hoàn Kiếm, Hà Nội</p>
+                                        <div class="mt-2 rounded-xl overflow-hidden" style="height:70px">
+                                            <div class="w-full h-full bg-gradient-to-r from-amber-100 to-orange-200 flex items-center justify-center">
+                                                <i class="fas fa-bowl-food text-orange-600 text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <div class="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-cloud-sun text-orange-400" style="font-size:10px"></i>
+                                            </div>
+                                            <span class="text-gray-400 font-medium" style="font-size:9px; letter-spacing:1px">BUỔI TRƯA • 14:00</span>
+                                        </div>
+                                        <p class="font-bold" style="font-size:13px">Bảo tàng Dân tộc học</p>
+                                        <p class="text-gray-400" style="font-size:9px"><i class="fas fa-map-marker-alt mr-1"></i> Nguyễn Văn Huyên, Cầu Giấy</p>
+                                        <div class="mt-2 bg-green-50 rounded-xl p-3">
+                                            <p class="text-green-800 italic" style="font-size:10px">"Khám phá di sản văn hóa đặc sắc của 54 dân tộc anh em."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+            <span class="text-sm text-gray-400">Cuộn xuống</span>
+            <i class="fas fa-chevron-down text-green-600"></i>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-white border-y border-gray-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="animate-on-scroll">
+                    <p class="stat-number text-4xl font-black" data-count="50000">0</p>
+                    <p class="text-gray-500 mt-2 font-medium">Người dùng</p>
+                </div>
+                <div class="animate-on-scroll" style="transition-delay: 0.1s">
+                    <p class="stat-number text-4xl font-black" data-count="120000">0</p>
+                    <p class="text-gray-500 mt-2 font-medium">Lịch trình đã tạo</p>
+                </div>
+                <div class="animate-on-scroll" style="transition-delay: 0.2s">
+                    <p class="stat-number text-4xl font-black" data-count="500">0</p>
+                    <p class="text-gray-500 mt-2 font-medium">Điểm đến</p>
+                </div>
+                <div class="animate-on-scroll" style="transition-delay: 0.3s">
+                    <p class="stat-number text-4xl font-black">4.8<span class="text-2xl">★</span></p>
+                    <p class="text-gray-500 mt-2 font-medium">Đánh giá trung bình</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 section-gradient relative">
+        <div class="blob-1 top-0 right-0"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="inline-block bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">TÍNH NĂNG NỔI BẬT</span>
+                <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-4">Mọi thứ bạn cần cho<br><span class="text-green-700">chuyến đi hoàn hảo</span></h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Từ lập kế hoạch đến quản lý chi phí, TravelMate đồng hành cùng bạn trên mọi hành trình.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-wand-magic-sparkles text-green-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">AI Tạo Lịch Trình</h3>
+                    <p class="text-gray-500 leading-relaxed">Chỉ cần nhập điểm đến, ngày đi và sở thích - AI sẽ tự động tạo lịch trình tối ưu nhất cho bạn.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll" style="transition-delay:0.1s">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-wallet text-emerald-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Quản Lý Ngân Sách</h3>
+                    <p class="text-gray-500 leading-relaxed">Theo dõi chi tiêu theo thời gian thực, phân bổ ngân sách và chia sẻ chi phí với nhóm bạn dễ dàng.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll" style="transition-delay:0.2s">
+                    <div class="w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-calendar-check text-teal-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Chọn Ngày Linh Hoạt</h3>
+                    <p class="text-gray-500 leading-relaxed">Lịch tương tác trực quan giúp bạn chọn ngày bắt đầu, kết thúc và dễ dàng điều chỉnh kế hoạch.</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll">
+                    <div class="w-14 h-14 bg-lime-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-heart text-lime-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Cá Nhân Hóa Sở Thích</h3>
+                    <p class="text-gray-500 leading-relaxed">Chọn các chủ đề yêu thích: cảnh quan thiên nhiên, ẩm thực, di tích lịch sử, địa điểm ít người biết...</p>
+                </div>
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll" style="transition-delay:0.1s">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-users text-green-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Đi Cùng Nhóm Bạn</h3>
+                    <p class="text-gray-500 leading-relaxed">Hỗ trợ nhóm đi từ người lớn, trẻ em đến thú cưng. Tính toán chi phí và chia sẻ giao dịch minh bạch.</p>
+                </div>
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-on-scroll" style="transition-delay:0.2s">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-5">
+                        <i class="fas fa-chart-pie text-emerald-700 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Đối Soát Chi Trả</h3>
+                    <p class="text-gray-500 leading-relaxed">Theo dõi ai nợ ai, nhắc nhở thanh toán và xem giao dịch gần đây - minh bạch từng đồng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section id="how-it-works" class="py-24 bg-gradient-to-b from-white to-green-50/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 animate-on-scroll">
+                <span class="inline-block bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">CÁCH HOẠT ĐỘNG</span>
+                <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-4">Chỉ <span class="text-green-700">4 bước</span> đơn giản</h2>
+                <p class="text-gray-500 text-lg">Từ ý tưởng đến hành trình hoàn hảo chưa bao giờ dễ dàng đến thế.</p>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center mb-32">
+                <div class="animate-left">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-700 text-white rounded-2xl flex items-center justify-center font-black text-xl">1</div>
+                        <div class="h-px bg-green-200 flex-1"></div>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">Thiết kế trải nghiệm <span class="text-green-700">của riêng bạn</span></h3>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-6">Chọn các chủ đề bạn quan tâm để chúng tôi biên soạn một hành trình mang đậm dấu ấn cá nhân. Từ cảnh quan thiên nhiên, hoạt động mạo hiểm, đến ẩm thực địa phương.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-mountain"></i> Thiên nhiên</span>
+                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-utensils"></i> Ẩm thực</span>
+                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-landmark"></i> Di tích</span>
+                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-compass"></i> Mạo hiểm</span>
+                    </div>
+                </div>
+                <div class="flex justify-center animate-right">
+                    <div class="phone-mockup float-2">
+                        <div class="phone-screen">
+                            <div class="phone-screen-inner screen-content p-4 pt-10">
+                                <div class="w-12 h-1 bg-green-600 rounded-full mb-4"></div>
+                                <h3 class="font-black text-xl mb-2">Thiết kế trải nghiệm của riêng bạn</h3>
+                                <p class="text-gray-500 mb-4" style="font-size:11px">Chọn các chủ đề bạn quan tâm để chúng tôi biên soạn một hành trình mang đậm dấu ấn cá nhân.</p>
+                                <div class="grid grid-cols-2 gap-3 mb-6">
+                                    <div class="relative rounded-xl overflow-hidden" style="height:100px">
+                                        <div class="w-full h-full bg-gradient-to-br from-emerald-300 to-green-600 flex items-end p-2">
+                                            <div class="absolute top-2 left-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                                <i class="fas fa-check text-green-600" style="font-size:8px"></i>
+                                            </div>
+                                            <span class="text-white font-bold" style="font-size:10px">Cảnh quan thiên nhiên</span>
+                                        </div>
+                                    </div>
+                                    <div class="relative rounded-xl overflow-hidden" style="height:100px">
+                                        <div class="w-full h-full bg-gradient-to-br from-amber-600 to-orange-800 flex items-end p-2">
+                                            <span class="text-white font-bold" style="font-size:10px">Hoạt động mạo hiểm</span>
+                                        </div>
+                                    </div>
+                                    <div class="relative rounded-xl overflow-hidden" style="height:100px">
+                                        <div class="w-full h-full bg-gradient-to-br from-stone-300 to-amber-200 flex items-end p-2">
+                                            <span class="text-white font-bold" style="font-size:10px">Di tích lịch sử</span>
+                                        </div>
+                                    </div>
+                                    <div class="relative rounded-xl overflow-hidden" style="height:100px">
+                                        <div class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-700 flex items-end p-2">
+                                            <div class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                                <i class="fas fa-check text-green-600" style="font-size:8px"></i>
+                                            </div>
+                                            <span class="text-white font-bold" style="font-size:10px">Địa điểm ít người biết tới</span>
+                                        </div>
+                                    </div>
+                                    <div class="relative rounded-xl overflow-hidden" style="height:100px">
+                                        <div class="w-full h-full bg-gradient-to-br from-orange-200 to-amber-300 flex items-end p-2">
+                                            <span class="text-gray-800 font-bold" style="font-size:10px">Ẩm thực địa phương</span>
+                                        </div>
+                                    </div>
+                                    <div class="rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center" style="height:100px">
+                                        <i class="fas fa-plus text-gray-400 text-xl mb-1"></i>
+                                        <span class="text-gray-400" style="font-size:9px">Thêm sở thích</span>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 rounded-2xl p-4">
+                                    <span class="text-green-600 font-black text-3xl opacity-20" style="line-height:1">99</span>
+                                    <p class="text-gray-600 italic" style="font-size:11px">"Hành trình không chỉ là việc đến một vùng đất mới, mà là cách chúng ta nhìn thấy thế giới qua những lăng kính khác nhau."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center mb-32">
+                <div class="flex justify-center order-2 lg:order-1 animate-left">
+                    <div class="phone-mockup float-1">
+                        <div class="phone-screen">
+                            <div class="phone-screen-inner screen-content p-4 pt-10">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex gap-1">
+                                        <div class="w-5 h-2 bg-green-700 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                    </div>
+                                    <span class="text-gray-400" style="font-size:10px">Bước 1/4</span>
+                                </div>
+                                <h3 class="font-black text-xl mb-1 mt-4">Bạn sẽ đi cùng ai?</h3>
+                                <p class="text-gray-500 mb-6" style="font-size:11px">Hãy cho chúng tôi biết số lượng thành viên để chuẩn bị lịch trình phù hợp nhất.</p>
+                                
+                                <div class="space-y-4 mb-8">
+                                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                        <div>
+                                            <p class="font-bold" style="font-size:13px">Người lớn</p>
+                                            <p class="text-gray-400" style="font-size:10px">Từ 13 tuổi trở lên</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i class="fas fa-minus text-gray-400" style="font-size:10px"></i></div>
+                                            <span class="font-bold text-lg">2</span>
+                                            <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center"><i class="fas fa-plus text-white" style="font-size:10px"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                        <div>
+                                            <p class="font-bold" style="font-size:13px">Trẻ em</p>
+                                            <p class="text-gray-400" style="font-size:10px">Độ tuổi 2 - 12</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i class="fas fa-minus text-gray-400" style="font-size:10px"></i></div>
+                                            <span class="font-bold text-lg">0</span>
+                                            <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center"><i class="fas fa-plus text-white" style="font-size:10px"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                                        <div>
+                                            <p class="font-bold" style="font-size:13px">Em bé</p>
+                                            <p class="text-gray-400" style="font-size:10px">Dưới 2 tuổi</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i class="fas fa-minus text-gray-400" style="font-size:10px"></i></div>
+                                            <span class="font-bold text-lg">0</span>
+                                            <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center"><i class="fas fa-plus text-white" style="font-size:10px"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between py-3">
+                                        <div>
+                                            <p class="font-bold" style="font-size:13px">Thú cưng 🐾</p>
+                                            <p class="text-gray-400" style="font-size:10px">Mang theo bạn bốn chân</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i class="fas fa-minus text-gray-400" style="font-size:10px"></i></div>
+                                            <span class="font-bold text-lg">0</span>
+                                            <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center"><i class="fas fa-plus text-white" style="font-size:10px"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3 class="font-bold text-lg mb-1">Ngân sách cho chuyến đi</h3>
+                                <p class="text-gray-500 mb-4" style="font-size:10px">Ước tính số tiền tối đa bạn muốn chi tiêu cho mỗi người.</p>
+                                <div class="bg-gray-50 rounded-2xl p-4">
+                                    <div class="flex items-baseline gap-2 mb-3">
+                                        <span class="text-gray-400" style="font-size:9px">MỨC<br>NGÂN SÁCH</span>
+                                        <span class="font-black text-2xl">5.000.000</span>
+                                        <span class="text-green-700 font-bold" style="font-size:12px">VNĐ</span>
+                                    </div>
+                                    <div class="relative w-full h-2 bg-gray-200 rounded-full mb-2">
+                                        <div class="absolute left-0 top-0 h-2 bg-green-600 rounded-full" style="width:50%"></div>
+                                        <div class="absolute w-5 h-5 bg-green-600 rounded-full border-2 border-white shadow" style="left:48%;top:-6px"></div>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400" style="font-size:9px">0</span>
+                                        <span class="text-gray-400" style="font-size:9px">10.000.000+</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 animate-right">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-700 text-white rounded-2xl flex items-center justify-center font-black text-xl">2</div>
+                        <div class="h-px bg-green-200 flex-1"></div>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">Tùy chỉnh <span class="text-green-700">nhóm & ngân sách</span></h3>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-6">Cho chúng tôi biết bạn đi cùng ai - người lớn, trẻ em hay thú cưng. Thiết lập ngân sách phù hợp để hệ thống gợi ý những lựa chọn tốt nhất.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Hỗ trợ đa thành viên</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Thanh trượt ngân sách trực quan</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Tự động lọc địa điểm phù hợp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center mb-32">
+                <div class="animate-left">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-700 text-white rounded-2xl flex items-center justify-center font-black text-xl">3</div>
+                        <div class="h-px bg-green-200 flex-1"></div>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">AI <span class="text-green-700">kiến tạo hành trình</span></h3>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-6">Chuyên gia ảo của chúng tôi đang tuyển chọn những trải nghiệm tinh túy nhất cho chuyến đi của bạn. Từ tìm kiếm địa điểm, tối ưu thời gian đến gợi ý hữu ích.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-green-50 p-4 rounded-xl">
+                            <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold">Tìm kiếm địa điểm phù hợp</p>
+                                <p class="text-sm text-gray-500">Phân tích sở thích của bạn</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-green-50 p-4 rounded-xl">
+                            <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0 animate-spin" style="animation-duration: 3s">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold">Thiết lập lịch trình</p>
+                                <p class="text-sm text-gray-500">Đang tối ưu hóa thời gian di chuyển...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center animate-right">
+                    <div class="phone-mockup float-3">
+                        <div class="phone-screen">
+                            <div class="phone-screen-inner screen-content p-4 pt-10">
+                                <div class="flex flex-col items-center mb-6">
+                                    <!-- Progress ring -->
+                                    <div class="relative mb-4">
+                                        <svg width="160" height="160" viewBox="0 0 160 160">
+                                            <circle cx="80" cy="80" r="65" stroke="#e5e7eb" stroke-width="10" fill="none"/>
+                                            <circle cx="80" cy="80" r="65" stroke="#166534" stroke-width="10" fill="none" 
+                                                stroke-dasharray="408" stroke-dashoffset="114" stroke-linecap="round"
+                                                transform="rotate(-90 80 80)" class="progress-ring-circle"/>
+                                        </svg>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                            <i class="fas fa-search-location text-green-800 text-2xl mb-1"></i>
+                                            <span class="font-black text-2xl text-green-800">72%</span>
+                                        </div>
+                                        <div class="absolute -top-1 -right-1 w-10 h-10 bg-green-700 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-sparkles text-white" style="font-size:14px"></i>
+                                        </div>
+                                    </div>
+                                    <h3 class="font-bold text-center mb-2" style="font-size:16px">Đang kiến tạo hành trình của bạn</h3>
+                                    <p class="text-gray-500 text-center" style="font-size:11px">Chuyên gia ảo của chúng tôi đang tuyển chọn những trải nghiệm tinh túy nhất cho chuyến đi của bạn.</p>
+                                </div>
+                                <div class="space-y-3 mb-6">
+                                    <div class="bg-green-50 border border-green-100 rounded-xl p-3 flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-check text-white" style="font-size:10px"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold" style="font-size:12px">Tìm kiếm địa điểm phù hợp</p>
+                                            <p class="text-gray-400" style="font-size:9px">Đã hoàn thành phân tích sở thích</p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 border-2 border-green-300 rounded-xl p-3 flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-clock text-white" style="font-size:10px"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="font-bold" style="font-size:12px">Thiết lập lịch trình</p>
+                                            <p class="text-gray-500" style="font-size:9px">Đang tối ưu hóa thời gian di chuyển...</p>
+                                        </div>
+                                        <div class="flex gap-0.5">
+                                            <div class="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce"></div>
+                                            <div class="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style="animation-delay:0.1s"></div>
+                                            <div class="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style="animation-delay:0.2s"></div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-xl p-3 flex items-center gap-3 opacity-50">
+                                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-map-pin text-gray-400" style="font-size:10px"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold" style="font-size:12px">Gợi ý hữu ích cho chuyến đi</p>
+                                            <p class="text-gray-400" style="font-size:9px">Sắp hoàn thiện các mẹo du lịch</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rounded-2xl overflow-hidden relative" style="height:130px">
+                                    <div class="w-full h-full bg-gradient-to-br from-blue-300 to-cyan-500 flex items-end p-4">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-city text-white text-3xl opacity-50"></i>
+                                        </div>
+                                        <div class="absolute bottom-4 left-4 text-white">
+                                            <p style="font-size:8px" class="opacity-70 tracking-widest">ĐIỂM ĐẾN NỔI BẬT</p>
+                                            <p class="font-bold" style="font-size:14px">Bangkok, Thái Lan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="flex justify-center order-2 lg:order-1 animate-left">
+                    <div class="phone-mockup float-2">
+                        <div class="phone-screen">
+                            <div class="phone-screen-inner screen-content">
+                                <div class="p-4 pt-10">
+                                    <p class="text-green-700 font-bold mb-1" style="font-size:9px; letter-spacing:1px">TỔNG QUAN CHUYẾN ĐI</p>
+                                    <h3 class="font-black text-2xl mb-4">Ngân sách<br>& Chi phí</h3>
+                                    <div class="bg-green-800 rounded-2xl p-4 mb-4 text-white">
+                                        <p style="font-size:10px" class="opacity-70">Bạn cần thanh toán</p>
+                                        <p class="font-black text-3xl mt-1">2.450.000 <span style="font-size:14px">đ</span></p>
+                                        <div class="flex items-center gap-2 mt-2 bg-green-700/50 px-3 py-1.5 rounded-full w-fit">
+                                            <i class="fas fa-arrow-trend-up" style="font-size:10px"></i>
+                                            <span style="font-size:9px">Cao hơn 12% so với dự kiến</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-2xl p-4 mb-6">
+                                        <p class="text-gray-400 mb-3" style="font-size:11px">Phân bổ chi phí</p>
+                                        <div class="mb-3">
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium" style="font-size:12px">Cơ sở trú</span>
+                                                <span class="text-gray-500" style="font-size:12px">45%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width:45%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="font-medium" style="font-size:12px">Ẩm thực</span>
+                                                <span class="text-gray-500" style="font-size:12px">30%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                                <div class="bg-yellow-500 h-2 rounded-full" style="width:30%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-6">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <p class="font-bold" style="font-size:14px">Đối soát chi trả</p>
+                                            <span class="text-green-700 font-medium" style="font-size:10px">Xem tất cả</span>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-800 font-bold" style="font-size:11px">MA</div>
+                                                    <div>
+                                                        <p class="font-bold" style="font-size:12px">Minh Anh</p>
+                                                        <p class="text-gray-400" style="font-size:9px">đang nợ bạn</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-bold text-red-600" style="font-size:12px">850.000đ</p>
+                                                    <span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold" style="font-size:8px">NHẮC NHỞ</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="w-10 h-10 bg-blue-200 rounded-full flex items-center justify-center text-blue-800 font-bold" style="font-size:11px">HN</div>
+                                                    <div>
+                                                        <p class="font-bold" style="font-size:12px">Hoàng Nam</p>
+                                                        <p class="text-gray-400" style="font-size:9px">bạn đang nợ</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="font-bold text-green-600" style="font-size:12px">1.600.000đ</p>
+                                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold" style="font-size:8px">TRẢ NGAY</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="font-bold mb-3" style="font-size:14px">Giao dịch gần đây</p>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center">
+                                                    <i class="fas fa-utensils text-orange-500" style="font-size:12px"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold" style="font-size:11px">Bữa tối tại Phố Cổ</p>
+                                                    <p class="text-gray-400" style="font-size:8px">Bạn trả • Chia cho 3 người</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold" style="font-size:11px">1.200.000đ</p>
+                                                <p class="text-gray-400" style="font-size:8px">HÔM QUA</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-2">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
+                                                    <i class="fas fa-taxi text-blue-500" style="font-size:12px"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold" style="font-size:11px">Taxi di chuyển Ga</p>
+                                                    <p class="text-gray-400" style="font-size:8px">Nam trả • Bạn nợ 75.000đ</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-bold" style="font-size:11px">225.000đ</p>
+                                                <p class="text-gray-400" style="font-size:8px">15 THG 10</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2 animate-right">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-green-700 text-white rounded-2xl flex items-center justify-center font-black text-xl">4</div>
+                        <div class="h-px bg-green-200 flex-1"></div>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">Quản lý <span class="text-green-700">ngân sách & chi phí</span></h3>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-6">Theo dõi mọi khoản chi tiêu, phân bổ ngân sách theo danh mục, đối soát chi trả với bạn đồng hành và quản lý giao dịch dễ dàng.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Phân bổ chi phí theo danh mục</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Đối soát chi trả nhóm bạn</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Lịch sử giao dịch chi tiết</li>
+                        <li class="flex items-center gap-3 text-gray-600"><i class="fas fa-check-circle text-green-600"></i> Nhắc nhở thanh toán tự động</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Screenshots Carousel -->
+    <section id="screens" class="py-24 bg-gradient-to-b from-green-50/50 to-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="inline-block bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">GIAO DIỆN ỨNG DỤNG</span>
+                <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-4">Trải nghiệm <span class="text-green-700">trực quan</span></h2>
+                <p class="text-gray-500 text-lg">Giao diện đẹp mắt, dễ sử dụng trên mọi thiết bị.</p>
+            </div>
+
+            <div class="phone-carousel justify-center pb-4" id="phoneCarousel">
+                <!-- Screen 1 - Calendar -->
+                <div class="phone-mockup flex-shrink-0">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content p-4 pt-10">
+                            <h3 class="font-black text-lg mb-1">Bạn dự định đi lúc nào?</h3>
+                            <p class="text-gray-500 mb-4" style="font-size:10px">Chọn ngày bắt đầu và kết thúc cho chuyến hành trình của bạn.</p>
+                            <p class="font-bold mb-3" style="font-size:13px">Tháng 10, 2023</p>
+                            <div class="grid grid-cols-7 gap-1 text-center mb-1" style="font-size:9px">
+                                <span class="text-gray-400 font-medium py-1">CN</span>
+                                <span class="text-gray-400 font-medium py-1">T2</span>
+                                <span class="text-gray-400 font-medium py-1">T3</span>
+                                <span class="text-gray-400 font-medium py-1">T4</span>
+                                <span class="text-gray-400 font-medium py-1">T5</span>
+                                <span class="text-gray-400 font-medium py-1">T6</span>
+                                <span class="text-gray-400 font-medium py-1">T7</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center" style="font-size:11px">
+                                <span></span><span class="py-2 text-gray-300">2</span><span class="py-2 text-gray-300">3</span><span class="py-2 text-gray-300">4</span><span class="py-2 text-gray-300">5</span><span class="py-2 text-gray-300">6</span><span class="py-2 text-gray-300">7</span>
+                                <span class="py-2 text-gray-300">8</span><span class="py-2">9</span><span class="py-2">10</span><span class="py-2">11</span><span class="py-2">12</span><span class="py-2">13</span><span class="py-2">14</span>
+                                <span class="py-2 bg-green-700 text-white rounded-full font-bold">15</span><span class="py-2 bg-green-100 text-green-800 rounded-l-full font-bold">16</span><span class="py-2 bg-green-100 text-green-800 font-bold">17</span><span class="py-2 bg-green-700 text-white rounded-full font-bold">18</span><span class="py-2">19</span><span class="py-2">20</span><span class="py-2">21</span>
+                                <span class="py-2">22</span><span class="py-2">23</span><span class="py-2">24</span><span class="py-2">25</span><span class="py-2">26</span><span class="py-2">27</span><span class="py-2">28</span>
+                                <span class="py-2">29</span><span class="py-2">30</span><span class="py-2">31</span>
+                            </div>
+                            <p class="font-bold mt-6 mb-3" style="font-size:13px">Tháng 11, 2023</p>
+                            <div class="grid grid-cols-7 gap-1 text-center mb-1" style="font-size:9px">
+                                <span class="text-gray-400 font-medium py-1">CN</span>
+                                <span class="text-gray-400 font-medium py-1">T2</span>
+                                <span class="text-gray-400 font-medium py-1">T3</span>
+                                <span class="text-gray-400 font-medium py-1">T4</span>
+                                <span class="text-gray-400 font-medium py-1">T5</span>
+                                <span class="text-gray-400 font-medium py-1">T6</span>
+                                <span class="text-gray-400 font-medium py-1">T7</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1 text-center" style="font-size:11px">
+                                <span></span><span></span><span></span><span class="py-2">1</span><span class="py-2">2</span><span class="py-2">3</span><span class="py-2">4</span>
+                                <span class="py-2">5</span><span class="py-2">6</span><span class="py-2">7</span><span class="py-2">8</span><span class="py-2">9</span><span class="py-2">10</span><span class="py-2">11</span>
+                                <span class="py-2">12</span><span class="py-2">13</span><span class="py-2">14</span><span class="py-2 text-green-700 font-bold">15</span><span class="py-2">16</span><span class="py-2">17</span><span class="py-2">18</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 2 - Preferences -->
+                <div class="phone-mockup flex-shrink-0">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content p-4 pt-10">
+                            <h3 class="font-black text-xl mb-2">Thiết kế trải nghiệm của riêng bạn</h3>
+                            <p class="text-gray-500 mb-4" style="font-size:11px">Chọn các chủ đề bạn quan tâm để chúng tôi biên soạn một hành trình mang đậm dấu ấn cá nhân.</p>
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="relative rounded-xl overflow-hidden" style="height:95px">
+                                    <div class="w-full h-full bg-gradient-to-br from-emerald-300 to-green-600 flex items-end p-2">
+                                        <div class="absolute top-2 left-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check text-green-600" style="font-size:8px"></i>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-mountain text-white" style="font-size:9px"></i>
+                                            <span class="text-white font-bold" style="font-size:10px">Cảnh quan thiên nhiên</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative rounded-xl overflow-hidden" style="height:95px">
+                                    <div class="w-full h-full bg-gradient-to-br from-amber-600 to-orange-800 flex items-end p-2">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-hiking text-white" style="font-size:9px"></i>
+                                            <span class="text-white font-bold" style="font-size:10px">Hoạt động mạo hiểm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative rounded-xl overflow-hidden" style="height:95px">
+                                    <div class="w-full h-full bg-gradient-to-br from-stone-300 to-amber-200 flex items-end p-2">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-landmark text-white" style="font-size:9px"></i>
+                                            <span class="text-white font-bold" style="font-size:10px">Di tích lịch sử</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="relative rounded-xl overflow-hidden" style="height:95px">
+                                    <div class="w-full h-full bg-gradient-to-br from-green-400 to-emerald-700 flex items-end p-2">
+                                        <div class="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                            <i class="fas fa-check text-green-600" style="font-size:8px"></i>
+                                        </div>
+                                        <span class="text-white font-bold" style="font-size:10px">Địa điểm ít người biết tới</span>
+                                    </div>
+                                </div>
+                                <div class="relative rounded-xl overflow-hidden" style="height:95px">
+                                    <div class="w-full h-full bg-gradient-to-br from-orange-200 to-amber-300 flex items-end p-2">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fas fa-utensils text-white" style="font-size:9px"></i>
+                                            <span class="text-gray-800 font-bold" style="font-size:10px">Ẩm thực địa phương</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center" style="height:95px">
+                                    <i class="fas fa-plus text-gray-400 text-xl mb-1"></i>
+                                    <span class="text-gray-400" style="font-size:9px">Thêm sở thích</span>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-2xl p-4 mt-2">
+                                <div class="flex gap-2">
+                                    <span class="text-green-600 font-black text-2xl opacity-30">99</span>
+                                    <p class="text-gray-600 italic" style="font-size:10px">"Hành trình không chỉ là việc đến một vùng đất mới, mà là cách chúng ta nhìn thấy thế giới qua những lăng kính khác nhau."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 3 - Itinerary detail -->
+                <div class="phone-mockup flex-shrink-0">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content">
+                            <div class="relative" style="height:170px">
+                                <div class="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-end p-4">
+                                    <div class="text-white">
+                                        <p style="font-size:9px" class="opacity-70 tracking-widest mb-1">ĐIỂM ĐẾN</p>
+                                        <p class="font-black" style="font-size:18px">Hà Nội Hoài Cổ</p>
+                                        <p style="font-size:10px" class="opacity-80 mt-1"><i class="far fa-calendar mr-1"></i> 15 Thg 10 - 18 Thg 10</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="bg-gray-50 rounded-2xl p-3 mb-4">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <p class="text-green-700 font-bold" style="font-size:8px;letter-spacing:1px">TỔNG NGÂN SÁCH</p>
+                                        <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold" style="font-size:8px">Hợp lý</span>
+                                    </div>
+                                    <p class="font-black text-xl">12.500.000đ</p>
+                                    <div class="flex justify-between items-center mt-1 mb-1">
+                                        <span class="text-gray-400" style="font-size:9px">Đã chi tiêu</span>
+                                        <span class="font-bold text-green-700" style="font-size:10px">8.240.000đ</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                        <div class="bg-gradient-to-r from-green-500 to-emerald-400 h-1.5 rounded-full" style="width:65%"></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 mb-4">
+                                    <span class="bg-green-700 text-white px-3 py-1 rounded-full font-bold" style="font-size:10px">Ngày 1</span>
+                                    <span class="bg-gray-100 px-3 py-1 rounded-full" style="font-size:10px">Ngày 2</span>
+                                    <span class="bg-gray-100 px-3 py-1 rounded-full" style="font-size:10px">Ngày 3</span>
+                                </div>
+                                <div class="bg-white border border-gray-100 rounded-xl p-3 mb-3 shadow-sm">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <i class="fas fa-sun text-yellow-500" style="font-size:9px"></i>
+                                        <span class="text-gray-400" style="font-size:8px;letter-spacing:1px">SÁNG SỚM • 08:30</span>
+                                    </div>
+                                    <p class="font-bold" style="font-size:12px">Phở Bát Đàn & Cà Phê Trứng</p>
+                                    <p class="text-gray-400" style="font-size:8px"><i class="fas fa-map-marker-alt"></i> 49 Bát Đàn, Hoàn Kiếm</p>
+                                    <div class="mt-2 rounded-lg overflow-hidden bg-gradient-to-r from-amber-100 to-orange-200 flex items-center justify-center" style="height:60px">
+                                        <i class="fas fa-bowl-food text-orange-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-white border border-gray-100 rounded-xl p-3 mb-3 shadow-sm">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <i class="fas fa-cloud-sun text-orange-400" style="font-size:9px"></i>
+                                        <span class="text-gray-400" style="font-size:8px;letter-spacing:1px">BUỔI TRƯA • 14:00</span>
+                                    </div>
+                                    <p class="font-bold" style="font-size:12px">Bảo tàng Dân tộc học</p>
+                                    <p class="text-gray-400" style="font-size:8px"><i class="fas fa-map-marker-alt"></i> Nguyễn Văn Huyên, Cầu Giấy</p>
+                                    <div class="mt-2 bg-green-50 rounded-lg p-2">
+                                        <p class="text-green-800 italic" style="font-size:9px">"Khám phá di sản văn hóa đặc sắc của 54 dân tộc anh em."</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white border border-gray-100 rounded-xl p-3 shadow-sm">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <i class="fas fa-moon text-indigo-400" style="font-size:9px"></i>
+                                        <span class="text-gray-400" style="font-size:8px;letter-spacing:1px">BUỔI TỐI • 19:30</span>
+                                    </div>
+                                    <p class="font-bold" style="font-size:12px">Dạo quanh Hồ Gươm</p>
+                                    <p class="text-gray-400" style="font-size:8px"><i class="fas fa-map-marker-alt"></i> Hàng Trống, Hoàn Kiếm</p>
+                                    <div class="mt-2 flex gap-2">
+                                        <div class="rounded-lg bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center" style="height:50px;width:50%">
+                                            <i class="fas fa-glass-cheers text-purple-500"></i>
+                                        </div>
+                                        <div class="rounded-lg bg-gradient-to-br from-teal-200 to-green-300 flex items-center justify-center" style="height:50px;width:50%">
+                                            <i class="fas fa-tree text-green-600"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 4 - Budget -->
+                <div class="phone-mockup flex-shrink-0">
+                    <div class="phone-screen">
+                        <div class="phone-screen-inner screen-content p-4 pt-10">
+                            <p class="text-green-700 font-bold mb-1" style="font-size:9px; letter-spacing:1px">TỔNG QUAN CHUYẾN ĐI</p>
+                            <h3 class="font-black text-xl mb-4">Ngân sách & Chi phí</h3>
+                            <div class="bg-green-800 rounded-2xl p-4 mb-4 text-white">
+                                <p style="font-size:10px" class="opacity-70">Bạn cần thanh toán</p>
+                                <p class="font-black text-2xl mt-1">2.450.000 <span style="font-size:12px">đ</span></p>
+                                <div class="flex items-center gap-1 mt-2 bg-green-700/50 px-2 py-1 rounded-full w-fit">
+                                    <i class="fas fa-arrow-trend-up" style="font-size:8px"></i>
+                                    <span style="font-size:8px">Cao hơn 12% so với dự kiến</span>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-3 mb-4">
+                                <p class="text-gray-400 mb-2" style="font-size:10px">Phân bổ chi phí</p>
+                                <div class="mb-2">
+                                    <div class="flex justify-between mb-0.5"><span style="font-size:11px" class="font-medium">Cơ sở trú</span><span style="font-size:11px" class="text-gray-500">45%</span></div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width:45%"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-0.5"><span style="font-size:11px" class="font-medium">Ẩm thực</span><span style="font-size:11px" class="text-gray-500">30%</span></div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-yellow-500 h-1.5 rounded-full" style="width:30%"></div></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center mb-3">
+                                <p class="font-bold" style="font-size:13px">Đối soát chi trả</p>
+                                <span class="text-green-700" style="font-size:9px">Xem tất cả</span>
+                            </div>
+                            <div class="space-y-3 mb-5">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-9 h-9 bg-green-200 rounded-full flex items-center justify-center font-bold" style="font-size:10px">MA</div>
+                                        <div>
+                                            <p class="font-bold" style="font-size:11px">Minh Anh</p>
+                                            <p class="text-gray-400" style="font-size:8px">đang nợ bạn</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-red-500" style="font-size:10px">850.000đ</p>
+                                        <span class="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded-full font-bold" style="font-size:7px">NHẮC NHỞ</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-9 h-9 bg-blue-200 rounded-full flex items-center justify-center font-bold" style="font-size:10px">HN</div>
+                                        <div>
+                                            <p class="font-bold" style="font-size:11px">Hoàng Nam</p>
+                                            <p class="text-gray-400" style="font-size:8px">bạn đang nợ</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-green-600" style="font-size:10px">1.600.000đ</p>
+                                        <span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-bold" style="font-size:7px">TRẢ NGAY</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="font-bold mb-2" style="font-size:13px">Giao dịch gần đây</p>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center"><i class="fas fa-utensils text-orange-500" style="font-size:10px"></i></div>
+                                    <div>
+                                        <p class="font-bold" style="font-size:10px">Bữa tối tại Phố Cổ</p>
+                                        <p class="text-gray-400" style="font-size:7px">Bạn trả • Chia cho 3 người</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold" style="font-size:10px">1.200.000đ</p>
+                                    <p class="text-gray-400" style="font-size:7px">HÔM QUA</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="inline-block bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">ĐÁNH GIÁ</span>
+                <h2 class="text-4xl lg:text-5xl font-black text-gray-900 mb-4">Người dùng <span class="text-green-700">nói gì?</span></h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card bg-green-50 rounded-3xl p-8 border border-green-100 animate-on-scroll">
+                    <div class="flex text-yellow-500 gap-1 mb-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"TravelMate giúp mình tiết kiệm rất nhiều thời gian lên kế hoạch. Chỉ cần vài phút là có lịch trình hoàn hảo cho cả nhóm bạn!"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center font-bold text-green-800">TH</div>
+                        <div>
+                            <p class="font-bold">Thu Hà</p>
+                            <p class="text-sm text-gray-500">Travel Blogger</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-emerald-50 rounded-3xl p-8 border border-emerald-100 animate-on-scroll" style="transition-delay:0.1s">
+                    <div class="flex text-yellow-500 gap-1 mb-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"Tính năng chia chi phí nhóm cực kỳ tiện lợi. Không còn phải tính toán ai nợ ai nữa. Mọi thứ đều minh bạch và rõ ràng."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-emerald-200 rounded-full flex items-center justify-center font-bold text-emerald-800">MĐ</div>
+                        <div>
+                            <p class="font-bold">Minh Đức</p>
+                            <p class="text-sm text-gray-500">Nhân viên văn phòng</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-teal-50 rounded-3xl p-8 border border-teal-100 animate-on-scroll" style="transition-delay:0.2s">
+                    <div class="flex text-yellow-500 gap-1 mb-4">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"AI gợi ý những địa điểm mà mình chưa bao giờ nghĩ tới. Chuyến đi Đà Lạt vừa rồi trở nên đặc biệt hơn rất nhiều nhờ app này."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-teal-200 rounded-full flex items-center justify-center font-bold text-teal-800">LA</div>
+                        <div>
+                            <p class="font-bold">Lan Anh</p>
+                            <p class="text-sm text-gray-500">Sinh viên</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / Download Section -->
+    <section id="download" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-800 via-green-700 to-emerald-600"></div>
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-40 h-40 border border-white/30 rounded-full"></div>
+            <div class="absolute bottom-20 right-20 w-60 h-60 border border-white/20 rounded-full"></div>
+            <div class="absolute top-1/2 left-1/3 w-20 h-20 border border-white/20 rounded-full"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 animate-on-scroll">
+            <div class="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-8 backdrop-blur">
+                <i class="fas fa-download"></i>
+                Miễn phí trên mọi nền tảng
+            </div>
+            <h2 class="text-4xl lg:text-6xl font-black text-white mb-6 leading-tight">Bắt đầu hành trình<br>của bạn ngay hôm nay</h2>
+            <p class="text-xl text-green-100 mb-10 max-w-2xl mx-auto">Tải TravelMate miễn phí và khám phá cách lập lịch trình du lịch thông minh nhất.</p>
+            <div class="flex flex-wrap gap-4 justify-center mb-12">
+                <a href="#" class="bg-white text-green-800 px-8 py-4 rounded-2xl font-bold text-lg flex items-center gap-3 hover:bg-green-50 transition shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-300">
+                    <i class="fab fa-apple text-3xl"></i>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 font-normal">Tải về trên</p>
+                        <p class="text-lg font-bold">App Store</p>
+                    </div>
+                </a>
+                <a href="#" class="bg-white text-green-800 px-8 py-4 rounded-2xl font-bold text-lg flex items-center gap-3 hover:bg-green-50 transition shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-300">
+                    <i class="fab fa-google-play text-3xl"></i>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 font-normal">Tải về trên</p>
+                        <p class="text-lg font-bold">Google Play</p>
+                    </div>
+                </a>
+            </div>
+            <div class="flex justify-center gap-12 text-white/80">
+                <div class="flex items-center gap-2"><i class="fas fa-shield-halved"></i><span class="text-sm">Bảo mật cao</span></div>
+                <div class="flex items-center gap-2"><i class="fas fa-bolt"></i><span class="text-sm">Nhanh chóng</span></div>
+                <div class="flex items-center gap-2"><i class="fas fa-heart"></i><span class="text-sm">Miễn phí</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-route text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold">TravelMate</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Ứng dụng lập lịch trình du lịch thông minh hàng đầu Việt Nam, hỗ trợ bởi AI.</p>
+                    <div class="flex gap-4 mt-6">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Sản phẩm</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400 transition">Tính năng</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Bảng giá</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Cập nhật mới</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">API cho đối tác</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hỗ trợ</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400 transition">Trung tâm trợ giúp</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Liên hệ</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Cộng đồng</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Blog du lịch</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Pháp lý</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-green-400 transition">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Điều khoản sử dụng</a></li>
+                        <li><a href="#" class="hover:text-green-400 transition">Cookie</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-gray-500 text-sm">© 2024 TravelMate. Tất cả quyền được bảo lưu.</p>
+                <p class="text-gray-500 text-sm">Made with <i class="fas fa-heart text-red-500"></i> in Vietnam</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll, .animate-left, .animate-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 60;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                if (target >= 1000) {
+                    element.textContent = Math.floor(current).toLocaleString('vi-VN') + '+';
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        }
+
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const count = entry.target.getAttribute('data-count');
+                    if (count) {
+                        animateCounter(entry.target, parseInt(count));
+                        entry.target.removeAttribute('data-count');
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number[data-count]').forEach(el => {
+            statObserver.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Phone carousel auto scroll on mobile
+        const carousel = document.getElementById('phoneCarousel');
+        let scrollDirection = 1;
+        let autoScrollInterval;
+
+        function startAutoScroll() {
+            autoScrollInterval = setInterval(() => {
+                if (carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth) {
+                    scrollDirection = -1;
+                } else if (carousel.scrollLeft <= 0) {
+                    scrollDirection = 1;
+                }
+                carousel.scrollBy({ left: scrollDirection * 310, behavior: 'smooth' });
+            }, 4000);
+        }
+
+        // Only auto scroll on smaller screens
+        if (window.innerWidth < 1024) {
+            startAutoScroll();
+        }
+
+        carousel.addEventListener('mouseenter', () => clearInterval(autoScrollInterval));
+        carousel.addEventListener('mouseleave', () => {
+            if (window.innerWidth < 1024) startAutoScroll();
+        });
+        carousel.addEventListener('touchstart', () => clearInterval(autoScrollInterval));
+        carousel.addEventListener('touchend', () => {
+            if (window.innerWidth < 1024) {
+                setTimeout(startAutoScroll, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
