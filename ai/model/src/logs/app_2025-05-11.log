@@ -1,0 +1,788 @@
+2025-05-11 00:19:42,355 - __main__ - INFO - All routers registered successfully
+2025-05-11 00:19:47,484 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:19:47,513 - app - INFO - All routers registered successfully
+2025-05-11 00:20:41,989 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:20:42,080 - app - INFO - All routers registered successfully
+2025-05-11 00:23:28,713 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:23:28,746 - app - INFO - All routers registered successfully
+2025-05-11 00:33:44,964 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:33:44,987 - app - INFO - All routers registered successfully
+2025-05-11 00:37:53,833 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:37:53,853 - app - INFO - All routers registered successfully
+2025-05-11 00:46:15,263 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:46:15,294 - app - INFO - All routers registered successfully
+2025-05-11 00:46:15,298 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 00:46:15,306 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 00:46:17,287 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 00:46:17,287 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 00:46:17,287 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 00:46:19,579 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BViZ895k7wGknR4uoNmFMFdN4bc9P', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"hotel in Hanoi suitable for family with children mid budget","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746899178, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=31, prompt_tokens=948, total_tokens=979, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 00:46:19,580 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"hotel in Hanoi suitable for family with children mid budget","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 00:46:19,580 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 00:46:19,581 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'hotel in Hanoi suitable for family with children mid budget', 'top_k': 15}
+2025-05-11 00:46:19,581 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 00:46:19,581 - src.agents.travel_agent - INFO - Querying hotels with context: hotel in Hanoi suitable for family with children mid budget
+2025-05-11 00:46:24,661 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 00:46:24,661 - src.agents.travel_agent - INFO - Querying places with context: hotel in Hanoi suitable for family with children mid budget
+2025-05-11 00:46:27,753 - src.agents.travel_agent - INFO - place_ids: ['place_000345', 'place_000416', 'place_004755', 'place_006512', 'place_010621', 'place_007854', 'place_005433', 'place_000117', 'place_000384', 'place_000583', 'place_000870', 'place_000728', 'place_000409', 'place_000068', 'place_000010', 'place_000688', 'place_000543', 'place_000830', 'place_000382', 'place_009936', 'place_002378', 'place_003692', 'place_011025', 'place_002238', 'place_008450', 'place_002934', 'place_004219', 'place_010085', 'place_006634', 'place_008762', 'place_005493', 'place_009809', 'place_009189', 'place_003348', 'place_001445', 'place_005895', 'place_007237', 'place_001909', 'place_010755', 'place_004816']
+2025-05-11 00:46:27,753 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 00:46:27,753 - src.agents.travel_agent - INFO - Querying restaurants with context: hotel in Hanoi suitable for family with children mid budget
+2025-05-11 00:46:27,753 - src.agents.travel_agent - INFO - Attempting to query FnB with text: hotel in Hanoi suitable for family with children mid budget, top_k: 40
+2025-05-11 00:46:30,827 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 00:46:30,827 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 00:46:30,827 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 00:46:30,827 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 00:46:30,827 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 00:46:30,827 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 00:46:30,838 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 00:46:30,846 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 00:46:33,316 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 00:46:33,316 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 00:46:33,316 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 00:46:35,671 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BViZOofMuBsk8BGIYWZU654NnNoNy', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746899194, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=56, prompt_tokens=948, total_tokens=1004, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 00:46:35,671 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 00:46:35,671 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 00:46:35,671 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style', 'top_k': 15}
+2025-05-11 00:46:35,671 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 00:46:35,671 - src.agents.travel_agent - INFO - Querying hotels with context: Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style
+2025-05-11 00:46:38,908 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 00:46:38,908 - src.agents.travel_agent - INFO - Querying places with context: Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style
+2025-05-11 00:46:41,708 - src.agents.travel_agent - INFO - place_ids: ['place_000416', 'place_000010', 'place_000117', 'place_000345', 'place_000409', 'place_000688', 'place_000830', 'place_000543', 'place_000204', 'place_000382', 'place_000122', 'place_000069', 'place_000583', 'place_000728', 'place_000870', 'place_010383', 'place_007617', 'place_009142', 'place_002207', 'place_009569', 'place_005196', 'place_005791', 'place_002758', 'place_007116', 'place_004517', 'place_010578', 'place_001743', 'place_003990', 'place_006275', 'place_007813', 'place_006471', 'place_005392', 'place_004712', 'place_004185', 'place_009765', 'place_000068', 'place_000216', 'place_009936', 'place_000262', 'place_000251']
+2025-05-11 00:46:41,708 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 00:46:41,708 - src.agents.travel_agent - INFO - Querying restaurants with context: Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style
+2025-05-11 00:46:41,708 - src.agents.travel_agent - INFO - Attempting to query FnB with text: Hotel in Hanoi suitable for family with 2 adults and 1 child, mid budget around 10000000 VND for 10 days, summer season, family travel style, top_k: 40
+2025-05-11 00:46:44,869 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 00:46:44,869 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 00:46:44,869 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 00:46:44,869 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 00:46:44,869 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 00:46:44,869 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 00:46:44,881 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 00:46:44,881 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 00:46:44,881 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 00:46:44,881 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 00:47:10,431 - src.services.genrate_plan_api - INFO - Generated plan: {'error': 'asyncio.run() cannot be called from a running event loop', 'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'destination_id': 'hanoi', 'plan_by_day': []}
+2025-05-11 00:47:10,433 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 00:47:10,458 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 00:47:10,458 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 00:47:10,458 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 00:47:10,459 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 00:47:33,113 - src.services.genrate_plan_api - INFO - Generated plan: {'error': 'asyncio.run() cannot be called from a running event loop', 'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'destination_id': 'hanoi', 'plan_by_day': []}
+2025-05-11 00:47:33,113 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 00:57:30,299 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:57:30,325 - app - INFO - All routers registered successfully
+2025-05-11 00:57:30,326 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 00:57:30,335 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 00:57:32,003 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 00:57:32,003 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 00:57:32,004 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 00:57:34,130 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVik1UNW2DEOxqLwvxLxeDJ4AZrmL', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746899853, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=46, prompt_tokens=948, total_tokens=994, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 00:57:34,133 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 00:57:34,135 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 00:57:34,135 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style', 'top_k': 15}
+2025-05-11 00:57:34,135 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 00:57:34,136 - src.agents.travel_agent - INFO - Querying hotels with context: hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style
+2025-05-11 00:57:39,013 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 00:57:39,014 - src.agents.travel_agent - INFO - Querying places with context: hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style
+2025-05-11 00:57:43,121 - src.agents.travel_agent - INFO - place_ids: ['place_000068', 'place_000416', 'place_000409', 'place_000345', 'place_000117', 'place_000010', 'place_009936', 'place_003692', 'place_007237', 'place_010085', 'place_010755', 'place_008450', 'place_009189', 'place_002238', 'place_011025', 'place_001909', 'place_004219', 'place_008762', 'place_009809', 'place_003348', 'place_006634', 'place_001445', 'place_005493', 'place_005895', 'place_002934', 'place_003155', 'place_002378', 'place_004816', 'place_006736', 'place_007979', 'place_000216', 'place_000728', 'place_000583', 'place_000870', 'place_000382', 'place_000830', 'place_000543', 'place_000688', 'place_000204', 'place_000069']
+2025-05-11 00:57:43,121 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 00:57:43,121 - src.agents.travel_agent - INFO - Querying restaurants with context: hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style
+2025-05-11 00:57:43,121 - src.agents.travel_agent - INFO - Attempting to query FnB with text: hotel in Hanoi suitable for family with 2 adults and 1 child, mid-range budget, summer season, family travel style, top_k: 40
+2025-05-11 00:57:46,053 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 00:57:46,053 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 00:57:46,053 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 00:57:46,053 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 00:57:46,053 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 00:57:46,054 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 00:57:46,067 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 00:57:46,079 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 00:57:48,732 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 00:57:48,732 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 00:57:48,732 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 00:57:50,409 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVikHUFP6ckvYgrhm6f1hfaNLs8pr', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotel in Hanoi with mid-range budget","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746899869, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=30, prompt_tokens=948, total_tokens=978, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 00:57:50,409 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotel in Hanoi with mid-range budget","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 00:57:50,410 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 00:57:50,410 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'family-friendly hotel in Hanoi with mid-range budget', 'top_k': 15}
+2025-05-11 00:57:50,410 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 00:57:50,410 - src.agents.travel_agent - INFO - Querying hotels with context: family-friendly hotel in Hanoi with mid-range budget
+2025-05-11 00:57:56,588 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 00:57:56,588 - src.agents.travel_agent - INFO - Querying places with context: family-friendly hotel in Hanoi with mid-range budget
+2025-05-11 00:57:59,132 - src.agents.travel_agent - INFO - place_ids: ['place_000345', 'place_010621', 'place_007854', 'place_006512', 'place_004755', 'place_005433', 'place_000583', 'place_000870', 'place_000728', 'place_000416', 'place_000543', 'place_000688', 'place_000830', 'place_000068', 'place_000384', 'place_000205', 'place_000409', 'place_000117', 'place_011734', 'place_011507', 'place_011249', 'place_011374', 'place_011097', 'place_011825', 'place_000382', 'place_000220', 'place_000010', 'place_000924', 'place_000457', 'place_000012', 'place_000463', 'place_000018', 'place_009761', 'place_006467', 'place_004184', 'place_007809', 'place_005388', 'place_004711', 'place_010577', 'place_012148']
+2025-05-11 00:57:59,132 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 00:57:59,132 - src.agents.travel_agent - INFO - Querying restaurants with context: family-friendly hotel in Hanoi with mid-range budget
+2025-05-11 00:57:59,132 - src.agents.travel_agent - INFO - Attempting to query FnB with text: family-friendly hotel in Hanoi with mid-range budget, top_k: 40
+2025-05-11 00:58:02,288 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 00:58:02,289 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 00:58:02,289 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 00:58:02,289 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 00:58:02,289 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 00:58:02,289 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 00:58:02,300 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 00:58:02,301 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 00:58:02,301 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 00:58:02,301 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 00:58:34,535 - src.services.genrate_plan_api - ERROR - Error processing trip plan request: '_asyncio.Task' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/Users/doa_ai/Developer/Grab-project/ai/model/src/services/genrate_plan_api.py", line 146, in get_trip_plan
+    if not result.get("start_date") or result["start_date"] == "":
+           ^^^^^^^^^^
+AttributeError: '_asyncio.Task' object has no attribute 'get'
+2025-05-11 00:58:36,671 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 00:58:36,671 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 00:58:36,671 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 00:58:36,672 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 00:58:59,481 - src.services.genrate_plan_api - ERROR - Error processing trip plan request: '_asyncio.Task' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/Users/doa_ai/Developer/Grab-project/ai/model/src/services/genrate_plan_api.py", line 146, in get_trip_plan
+    if not result.get("start_date") or result["start_date"] == "":
+           ^^^^^^^^^^
+AttributeError: '_asyncio.Task' object has no attribute 'get'
+2025-05-11 00:59:43,140 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 00:59:43,172 - app - INFO - All routers registered successfully
+2025-05-11 00:59:47,273 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 00:59:47,290 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 00:59:49,269 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 00:59:49,269 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 00:59:49,269 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 00:59:50,679 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVimD5cDLUPFKB4IhnRWk3u4gAEfG', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hanoi family hotel mid budget summer","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746899989, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=28, prompt_tokens=948, total_tokens=976, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 00:59:50,680 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hanoi family hotel mid budget summer","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 00:59:50,680 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 00:59:50,680 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'Hanoi family hotel mid budget summer', 'top_k': 15}
+2025-05-11 00:59:50,680 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 00:59:50,680 - src.agents.travel_agent - INFO - Querying hotels with context: Hanoi family hotel mid budget summer
+2025-05-11 00:59:53,432 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 00:59:53,432 - src.agents.travel_agent - INFO - Querying places with context: Hanoi family hotel mid budget summer
+2025-05-11 00:59:56,224 - src.agents.travel_agent - INFO - place_ids: ['place_000068', 'place_000345', 'place_000416', 'place_000117', 'place_000830', 'place_000688', 'place_000543', 'place_000384', 'place_012148', 'place_000409', 'place_000010', 'place_000069', 'place_000382', 'place_006512', 'place_007854', 'place_004755', 'place_010621', 'place_005433', 'place_000870', 'place_000583', 'place_000728', 'place_000924', 'place_000208', 'place_000022', 'place_000457', 'place_000077', 'place_000205', 'place_000012', 'place_000226', 'place_000204', 'place_000946', 'place_000183', 'place_000160', 'place_000125', 'place_011249', 'place_011825', 'place_011374', 'place_011507', 'place_011734', 'place_011097']
+2025-05-11 00:59:56,225 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 00:59:56,226 - src.agents.travel_agent - INFO - Querying restaurants with context: Hanoi family hotel mid budget summer
+2025-05-11 00:59:56,226 - src.agents.travel_agent - INFO - Attempting to query FnB with text: Hanoi family hotel mid budget summer, top_k: 40
+2025-05-11 00:59:59,170 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 00:59:59,170 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 00:59:59,170 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 00:59:59,170 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 00:59:59,170 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 00:59:59,171 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 00:59:59,306 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 00:59:59,306 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 00:59:59,306 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 00:59:59,306 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 01:00:30,430 - src.services.genrate_plan_api - INFO - Generated plan: {'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'user_id': 'user123', 'destination_id': 'hanoi', 'plan_by_day': [{'date': '2025-05-11', 'day_title': 'Ngày 1: Khám phá Hà Nội cổ kính', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'hotel_008170', 'type': 'accommodation', 'name': 'Luxury Hanoi Hotel', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Bạn sẽ được nghỉ ngơi tại khách sạn sang trọng giữa lòng Hà Nội.', 'location': 'Hà Nội', 'rating': 4.7, 'price': 1200000.0, 'image_url': '', 'booking_link': '', 'room_info': 'Phòng tiêu chuẩn', 'tax_info': 'Đã bao gồm thuế', 'elderly_friendly': True, 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000068', 'type': 'place', 'name': 'Green Pool', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Chúng ta sẽ tận hưởng không gian xanh mát và yên bình.', 'address': 'Hà Nội', 'categories': 'nature', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.4, 'price': 0, 'image_url': '', 'url': ''}, {'id': 'place_000345', 'type': 'place', 'name': 'Ride for student', 'start_time': '15:30', 'end_time': '17:00', 'description': 'Bạn sẽ tham gia trải nghiệm đạp xe quanh phố cổ độc đáo.', 'address': 'Hà Nội', 'categories': 'activity', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.5, 'price': 150000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_001958', 'type': 'restaurant', 'name': 'Vietnamese Family Meal', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức bữa tối truyền thống đậm đà hương vị Việt.', 'address': 'Hà Nội', 'cuisines': 'Ẩm thực Việt Nam', 'price_range': '100,000-300,000 VND', 'rating': 4.6, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-12', 'day_title': 'Ngày 2: Khám phá nét đẹp văn hóa và ẩm thực Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_000416', 'type': 'place', 'name': 'Hanoi Group Travel', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Bạn sẽ được trải nghiệm tour khám phá Hà Nội độc đáo. Khám phá văn hóa và lịch sử qua từng bước chân.', 'address': 'Hà Nội', 'categories': 'tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 350000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000688', 'type': 'place', 'name': 'Vietnam Hanoi Package Tours', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Chúng ta sẽ khám phá những điểm đến hấp dẫn qua tour trọn gói chất lượng cao.', 'address': 'Hà Nội', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 400000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000098', 'type': 'restaurant', 'name': 'Family Restaurant', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Bạn sẽ được thưởng thức món ăn truyền thống đậm đà hương vị Việt. Không gian ấm cúng, thân thiện.', 'address': 'Hà Nội', 'cuisines': 'Đặc sản địa phương', 'price_range': '100,000-300,000 VND', 'rating': 4.5, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-13', 'day_title': 'Ngày 3: Hành trình trải nghiệm văn hóa và ẩm thực', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_000117', 'type': 'place', 'name': 'Avitour', 'start_time': '08:00', 'end_time': '10:30', 'description': 'Bạn sẽ được khám phá các tour du lịch độc đáo tại Avitour. Chúng ta cùng tìm hiểu lịch sử Hà Nội.', 'address': 'Hà Nội', 'categories': 'tour agency', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000384', 'type': 'place', 'name': 'HOTEL de LAGOM', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Chúng ta sẽ chiêm ngưỡng kiến trúc độc đáo và không gian nghệ thuật tại khách sạn boutique này.', 'address': 'Hà Nội', 'categories': 'boutique hotel', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000557', 'type': 'restaurant', 'name': 'The Hanoi Cafe', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Bạn sẽ được thưởng thức ẩm thực Việt Nam truyền thống trong không gian ấm cúng tại The Hanoi Cafe.', 'address': 'Hà Nội', 'cuisines': 'Việt Nam truyền thống', 'price_range': '100,000-300,000 VND', 'rating': 4.5, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}]}
+2025-05-11 01:00:30,431 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 01:01:02,322 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:01:02,569 - app - INFO - All routers registered successfully
+2025-05-11 01:01:07,974 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 01:01:07,989 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 01:01:10,487 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 01:01:10,487 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 01:01:10,487 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 01:01:12,472 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVinX1ilzGAdpc82NjTbveFJJsZ9o', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746900071, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=47, prompt_tokens=948, total_tokens=995, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 01:01:12,473 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 01:01:12,474 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 01:01:12,474 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer', 'top_k': 15}
+2025-05-11 01:01:12,474 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 01:01:12,474 - src.agents.travel_agent - INFO - Querying hotels with context: family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer
+2025-05-11 01:01:15,955 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 01:01:15,955 - src.agents.travel_agent - INFO - Querying places with context: family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer
+2025-05-11 01:01:18,719 - src.agents.travel_agent - INFO - place_ids: ['place_000068', 'place_009936', 'place_003155', 'place_003692', 'place_001445', 'place_005493', 'place_010755', 'place_004219', 'place_006634', 'place_009809', 'place_007237', 'place_005895', 'place_008450', 'place_001909', 'place_003348', 'place_009189', 'place_002934', 'place_002238', 'place_010085', 'place_008762', 'place_011025', 'place_002378', 'place_006736', 'place_004816', 'place_007979', 'place_000688', 'place_000543', 'place_000830', 'place_000345', 'place_000416', 'place_000010', 'place_007854', 'place_006512', 'place_004755', 'place_010621', 'place_005433', 'place_000117', 'place_000409', 'place_000583', 'place_000870']
+2025-05-11 01:01:18,720 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 01:01:18,720 - src.agents.travel_agent - INFO - Querying restaurants with context: family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer
+2025-05-11 01:01:18,720 - src.agents.travel_agent - INFO - Attempting to query FnB with text: family-friendly hotels in Hanoi with mid-range budget around 10000000 VND for 2 adults and 1 child in summer, top_k: 40
+2025-05-11 01:01:21,979 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 01:01:21,980 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 01:01:21,980 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 01:01:21,980 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 01:01:21,980 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 01:01:21,980 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 01:01:22,081 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 01:01:22,082 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 01:01:22,082 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 01:01:22,082 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 01:01:57,124 - src.services.genrate_plan_api - INFO - Generated plan: {'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'user_id': 'user123', 'destination_id': 'hanoi', 'plan_by_day': [{'date': '2025-05-11', 'day_title': 'Ngày 1: Khám phá Hà Nội cổ kính', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'hotel_007760', 'type': 'accommodation', 'name': '22Land Residence Hotel & Spa 52 Ngo Huyen', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Bạn sẽ được tận hưởng không gian sang trọng, tiện nghi hiện đại.', 'location': 'Hà Nội', 'rating': 4.7, 'price': 1200000.0, 'image_url': '', 'booking_link': '', 'room_info': 'Phòng tiêu chuẩn', 'tax_info': 'Đã bao gồm thuế', 'elderly_friendly': True, 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000068', 'type': 'place', 'name': 'Green Pool', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Chúng ta sẽ thư giãn tại hồ nước trong xanh tuyệt đẹp giữa lòng thành phố.', 'address': 'Hà Nội', 'categories': 'nature', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.4, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_001672', 'type': 'restaurant', 'name': 'Song Huong Floating Restaurant', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Bạn sẽ thưởng thức hương vị đặc sản bên sông thơ mộng.', 'address': 'Hà Nội', 'cuisines': 'Ẩm thực Việt Nam', 'price_range': '100,000-300,000 VND', 'rating': 4.6, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-12', 'day_title': 'Ngày 2: Hành trình khám phá văn hóa Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_009936', 'type': 'place', 'name': 'Lăng Chủ tịch Hồ Chí Minh', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Bạn sẽ được tìm hiểu lịch sử và chiêm ngưỡng kiến trúc trang nghiêm.', 'address': 'Hà Nội', 'categories': 'historical', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 30000.0, 'image_url': '', 'url': ''}, {'id': 'place_003155', 'type': 'place', 'name': 'Chùa Một Cột', 'start_time': '10:15', 'end_time': '11:00', 'description': 'Chúng ta sẽ tham quan biểu tượng kiến trúc độc đáo giữa hồ sen.', 'address': 'Hà Nội', 'categories': 'cultural', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.5, 'price': 20000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_005493', 'type': 'place', 'name': 'Phố cổ Hà Nội', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Bạn sẽ được hòa mình vào nhịp sống sôi động và thưởng thức ẩm thực đường phố.', 'address': 'Hà Nội', 'categories': 'shopping, cultural', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_002224', 'type': 'restaurant', 'name': "Saigon's Book Hotel & Restaurant", 'start_time': '18:30', 'end_time': '20:00', 'description': 'Thưởng thức món ăn truyền thống trong không gian ấm cúng.', 'address': 'Hà Nội', 'cuisines': 'Việt Nam', 'price_range': '100,000-300,000 VND', 'rating': 4.4, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}, {'id': 'place_007237', 'type': 'place', 'name': 'Hồ Hoàn Kiếm', 'start_time': '20:15', 'end_time': '21:00', 'description': 'Chúng ta sẽ đi dạo quanh hồ, tận hưởng không khí mát mẻ về đêm.', 'address': 'Hà Nội', 'categories': 'scenic', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.8, 'price': 0, 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-13', 'day_title': 'Ngày 3: Trải nghiệm Spa và Ẩm thực Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_007854', 'type': 'place', 'name': 'Eden Spa', 'start_time': '08:00', 'end_time': '10:30', 'description': 'Bạn sẽ được thư giãn với liệu pháp spa truyền thống tuyệt vời 🧖\u200d♀️.', 'address': 'Hà Nội', 'categories': 'wellness', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 600000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000688', 'type': 'place', 'name': 'Vietnam Hanoi Package Tours', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Chúng ta sẽ khám phá các tour văn hóa độc đáo quanh Hà Nội.', 'address': 'Hà Nội', 'categories': 'cultural tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 350000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000623', 'type': 'restaurant', 'name': 'Little Hanoi Restaurants', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Bạn sẽ được thưởng thức các món ăn đậm đà hương vị Hà Nội 🌟.', 'address': 'Hà Nội', 'cuisines': 'Đặc sản Việt Nam', 'price_range': '100,000-300,000 VND', 'rating': 4.5, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}]}
+2025-05-11 01:01:57,125 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 01:03:28,797 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:03:28,830 - app - INFO - All routers registered successfully
+2025-05-11 01:03:48,391 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:03:48,407 - app - INFO - All routers registered successfully
+2025-05-11 01:04:12,127 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:04:12,166 - app - INFO - All routers registered successfully
+2025-05-11 01:04:27,523 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:04:27,560 - app - INFO - All routers registered successfully
+2025-05-11 01:04:27,567 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 01:04:27,577 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 01:04:29,602 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 01:04:29,602 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 01:04:29,602 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 01:04:31,563 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BViqkSD9zokjBL92CfI5t7ubg7GIq', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotel in Hanoi mid-range budget","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746900270, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=29, prompt_tokens=948, total_tokens=977, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 01:04:31,564 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"family-friendly hotel in Hanoi mid-range budget","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 01:04:31,564 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 01:04:31,564 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'family-friendly hotel in Hanoi mid-range budget', 'top_k': 15}
+2025-05-11 01:04:31,564 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 01:04:31,564 - src.agents.travel_agent - INFO - Querying hotels with context: family-friendly hotel in Hanoi mid-range budget
+2025-05-11 01:04:35,918 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 01:04:35,918 - src.agents.travel_agent - INFO - Querying places with context: family-friendly hotel in Hanoi mid-range budget
+2025-05-11 01:04:39,036 - src.agents.travel_agent - INFO - place_ids: ['place_000345', 'place_010621', 'place_006512', 'place_007854', 'place_004755', 'place_005433', 'place_000068', 'place_000583', 'place_000728', 'place_000870', 'place_000416', 'place_000543', 'place_000688', 'place_000830', 'place_000384', 'place_000205', 'place_011374', 'place_011734', 'place_011097', 'place_011249', 'place_011825', 'place_011507', 'place_000117', 'place_000382', 'place_000010', 'place_000409', 'place_000220', 'place_009761', 'place_007809', 'place_004184', 'place_005388', 'place_006467', 'place_000924', 'place_004711', 'place_010577', 'place_000012', 'place_000463', 'place_000457', 'place_000387', 'place_000018']
+2025-05-11 01:04:39,036 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 01:04:39,036 - src.agents.travel_agent - INFO - Querying restaurants with context: family-friendly hotel in Hanoi mid-range budget
+2025-05-11 01:04:39,036 - src.agents.travel_agent - INFO - Attempting to query FnB with text: family-friendly hotel in Hanoi mid-range budget, top_k: 40
+2025-05-11 01:04:41,868 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 01:04:41,869 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 01:04:41,869 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 01:04:41,869 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 01:04:41,869 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 01:04:41,869 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 01:04:41,989 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 01:04:41,990 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 01:04:41,990 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 01:04:41,990 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 01:05:00,106 - src.services.genrate_plan_api - INFO - Generated plan: {'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'user_id': 'user123', 'destination_id': 'hanoi', 'plan_by_day': [{'date': '2025-05-11', 'day_title': 'Ngày 1: Hành trình thư giãn tại Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'hotel_008170', 'type': 'accommodation', 'name': 'Luxury Hanoi Hotel', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Tận hưởng sự sang trọng và dịch vụ chuyên nghiệp tại Luxury Hanoi Hotel.', 'location': '', 'rating': 4.5, 'price': 0, 'image_url': '', 'booking_link': '', 'room_info': 'Phòng tiêu chuẩn', 'tax_info': 'Đã bao gồm thuế', 'elderly_friendly': True, 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000583', 'type': 'place', 'name': 'Reliable Vietnam Travel', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Khám phá các tour du lịch độc đáo và thú vị tại Reliable Vietnam Travel.', 'address': '', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.0, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000494', 'type': 'restaurant', 'name': 'Maison Sen', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức ẩm thực tinh tế và đẳng cấp tại nhà hàng Maison Sen.', 'address': '', 'cuisines': 'Đặc sản địa phương', 'price_range': '100,000-300,000 VND', 'rating': 4.2, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-12', 'day_title': 'Ngày 2: Khám phá văn hóa Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_000688', 'type': 'place', 'name': 'Hanoi Old Quarter', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Khám phá lịch sử và văn hóa đậm nét của Hà Nội tại Phố Cổ.', 'address': 'Hanoi, Vietnam', 'categories': 'Historical Landmark, Cultural Experience', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000345', 'type': 'place', 'name': 'Ride for student', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Trải nghiệm cảm giác mới lạ với dịch vụ xe đạp độc đáo dành cho sinh viên.', 'address': 'Hanoi, Vietnam', 'categories': 'Cycling, Student Experience', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.3, 'price': 150000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000432', 'type': 'restaurant', 'name': 'Peace vegan', 'start_time': '18:30', 'end_time': '20:30', 'description': 'Thưởng thức ẩm thực chay sáng tạo và ngon miệng tại nhà hàng Peace vegan.', 'address': 'Hanoi, Vietnam', 'cuisines': 'Chay, Vegan', 'price_range': '100,000-300,000 VND', 'rating': 4.6, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}, {'date': '2025-05-13', 'day_title': 'Ngày 3: Hà Nội - Thủ đô văn hóa đặc sắc', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_011374', 'type': 'place', 'name': 'Hanoi Old Quarter', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Khám phá bức tranh lịch sử của Hà Nội tại Phố cổ Hà Thành.', 'address': 'Hoàn Kiếm, Hà Nội', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.8, 'price': 50000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000688', 'type': 'place', 'name': 'Hanoi Group Travel', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Thăm thông tin du lịch chi tiết tại Hanoi Group Travel.', 'address': '16 Phan Chu Trinh, Hoàn Kiếm, Hà Nội', 'categories': 'travel agency', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000160', 'type': 'restaurant', 'name': 'Little Vietnam', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức ẩm thực truyền thống Việt Nam tại Little Vietnam.', 'address': '21 Hang Gai, Hoàn Kiếm, Hà Nội', 'cuisines': 'Vietnamese', 'price_range': '100,000-300,000 VND', 'rating': 4.7, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': []}]}
+2025-05-11 01:05:00,107 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 01:06:02,639 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:06:02,664 - app - INFO - All routers registered successfully
+2025-05-11 01:06:32,443 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:06:32,478 - app - INFO - All routers registered successfully
+2025-05-11 01:06:32,480 - src.services.suggest_api - INFO - Processing recommendation query for hanoi
+2025-05-11 01:06:32,488 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 01:06:34,702 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 01:06:34,702 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hanoi with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 01:06:34,702 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 01:06:37,493 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVismunYrNqrmRq5f2Hg9bT0SZbb3', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hanoi mid-range hotels suitable for family with children, comfortable for summer stay","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746900396, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=36, prompt_tokens=948, total_tokens=984, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 01:06:37,493 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Hanoi mid-range hotels suitable for family with children, comfortable for summer stay","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 01:06:37,494 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 01:06:37,494 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'Hanoi mid-range hotels suitable for family with children, comfortable for summer stay', 'top_k': 15}
+2025-05-11 01:06:37,494 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 01:06:37,494 - src.agents.travel_agent - INFO - Querying hotels with context: Hanoi mid-range hotels suitable for family with children, comfortable for summer stay
+2025-05-11 01:06:42,650 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 01:06:42,651 - src.agents.travel_agent - INFO - Querying places with context: Hanoi mid-range hotels suitable for family with children, comfortable for summer stay
+2025-05-11 01:06:45,248 - src.agents.travel_agent - INFO - place_ids: ['place_000068', 'place_000345', 'place_000416', 'place_000456', 'place_000409', 'place_004755', 'place_010621', 'place_006512', 'place_007854', 'place_005433', 'place_009936', 'place_003155', 'place_006736', 'place_005895', 'place_006634', 'place_010755', 'place_008450', 'place_009189', 'place_002934', 'place_004219', 'place_002238', 'place_008762', 'place_009809', 'place_001909', 'place_005493', 'place_003348', 'place_001445', 'place_010085', 'place_007237', 'place_011025', 'place_003692', 'place_002378', 'place_007979', 'place_004816', 'place_000061', 'place_001108', 'place_000870', 'place_000583', 'place_000728', 'place_000117']
+2025-05-11 01:06:45,249 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 01:06:45,249 - src.agents.travel_agent - INFO - Querying restaurants with context: Hanoi mid-range hotels suitable for family with children, comfortable for summer stay
+2025-05-11 01:06:45,249 - src.agents.travel_agent - INFO - Attempting to query FnB with text: Hanoi mid-range hotels suitable for family with children, comfortable for summer stay, top_k: 40
+2025-05-11 01:06:48,197 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 01:06:48,197 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 01:06:48,197 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 01:06:48,197 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 01:06:48,197 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 01:06:48,197 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 01:06:48,301 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 01:06:48,301 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 01:06:48,301 - src.services.genrate_plan_api - INFO - Destination identified as: hanoi
+2025-05-11 01:06:48,301 - src.services.genrate_plan_api - INFO - Generating plan with destination: hanoi
+2025-05-11 01:07:42,009 - src.services.genrate_plan_api - INFO - Generated plan: {'trip_name': 'Trip to Hanoi', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'user_id': 'user123', 'destination_id': 'hanoi', 'plan_by_day': [{'date': '2025-05-11', 'day_title': 'Ngày 1: Khám phá nét đẹp truyền thống Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'hotel_008170', 'type': 'accommodation', 'name': 'Luxury Hanoi Hotel', 'start_time': '09:00', 'end_time': '11:00', 'description': 'Bạn sẽ được tận hưởng không gian sang trọng và dịch vụ chăm sóc chuyên nghiệp tại Luxury Hanoi Hotel.', 'location': '', 'rating': 4.5, 'price': 0, 'image_url': '', 'booking_link': '', 'room_info': 'Phòng tiêu chuẩn', 'tax_info': 'Đã bao gồm thuế', 'elderly_friendly': True, 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000068', 'type': 'place', 'name': 'Hồ xanh', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Hòa mình vào không gian yên bình của Hồ Xanh, nơi mang đến cảm giác thư giãn và thanh bình.', 'address': '', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.0, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000098', 'type': 'restaurant', 'name': 'Nhà hàng Gia Đình', 'start_time': '18:30', 'end_time': '20:30', 'description': 'Thưởng thức bữa tối thân mật và ấm cúng tại Nhà hàng Gia Đình với những món ăn đậm chất Việt.', 'address': '', 'cuisines': 'Đặc sản địa phương', 'price_range': '100,000-300,000 VND', 'rating': 4.2, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['- Chọn khách sạn ở khu vực gần Trung tâm Hà Nội', '- Ghé thăm Văn Miếu - Quốc Tử Giám để tìm hiểu lịch sử văn hóa Việt Nam', '- Thử các món ăn đường phố tại khu chợ Đồng Xuân', '- Đừng bỏ lỡ phố cổ Hà Nội vào buổi tối để trải nghiệm không khí đêm đẹp lung linh', '- Cân nhắc thuê guide địa phương để hiểu rõ hơn về địa điểm du lịch bạn thăm']}, {'date': '2025-05-12', 'day_title': 'Ngày 2: Khám phá vẻ đẹp lịch sử Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_000409', 'type': 'place', 'name': 'H.O.T Tourism', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Khám phá văn hóa và lịch sử Hà Nội tại H.O.T Tourism.', 'address': 'Hà Nội', 'categories': 'Cultural Experience', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 200000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000345', 'type': 'place', 'name': 'Ride for student', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Trải nghiệm cảm giác mới mẻ tại Ride for student.', 'address': 'Hà Nội', 'categories': 'Entertainment', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.3, 'price': 150000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_001635', 'type': 'restaurant', 'name': 'Nam Phuong Restaurant', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức hương vị ẩm thực truyền thống tại Nhà hàng Nam Phuong.', 'address': 'Hà Nội', 'cuisines': 'Vietnamese Cuisine', 'price_range': '100,000-300,000 VND', 'rating': 4.4, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['- Nên bắt đầu sớm từ 6-8h sáng để tránh nóng và đông đúc', '- Sử dụng Grab hoặc Gojek để di chuyển thuận tiện ở Hanoi', '- Luôn mang theo nước uống và kem chống nắng khi đi tham quan', '- Thử món phở ở Phở Gia Truyen hoặc Phở 10 Lý Quốc Sư', '- Ghé thăm Hồ Gươm vào buổi tối để ngắm cảnh đẹp và thư giãn', '- Mua sắm tại Chợ Đồng Xuân để trải nghiệm văn hóa địa phương', '- Tham quan Văn Miếu - Quốc Tử Giám để hiểu về lịch sử và văn hóa đất nước']}, {'date': '2025-05-13', 'day_title': 'Ngày 3: Khám phá văn hóa Hà Nội', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_000456', 'type': 'place', 'name': 'Hoyt Farms', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Khám phá vẻ đẹp tự nhiên và nông nghiệp tại Hoyt Farms.', 'address': 'Hà Nội', 'categories': 'farms', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 100000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_000870', 'type': 'place', 'name': 'Reliable Vietnam Travel', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Tham quan địa điểm du lịch uy tín để tìm hiểu về văn hóa địa phương.', 'address': 'Hà Nội', 'categories': 'travel agency', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.8, 'price': 80000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_000557', 'type': 'restaurant', 'name': 'The Hanoi Cafe', 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức ẩm thực địa phương tại The Hanoi Cafe với không gian ấm cúng.', 'address': 'Hà Nội', 'cuisines': 'Đặc sản Hà Nội', 'price_range': '100,000-300,000 VND', 'rating': 4.6, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['- Bắt đầu thăm Hoyt Farms từ lúc 9h sáng để tránh đông đúc.', '- Mặc đồ thoải mái khi tham quan Hoyt Farms.', '- Tiết kiệm chi phí khi đi du lịch tại Reliable Vietnam Travel.', '- Tôn trọng văn hóa địa phương khi giao tiếp.', '- Tương tác với người dân địa phương một cách tôn trọng.']}]}
+2025-05-11 01:07:42,013 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 01:14:30,944 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 01:14:30,974 - app - INFO - All routers registered successfully
+2025-05-11 01:15:51,283 - src.services.suggest_api - INFO - Processing recommendation query for hochiminh
+2025-05-11 01:15:51,295 - src.agents.travel_agent - INFO - Setting up all databases...
+2025-05-11 01:15:54,048 - src.agents.travel_agent - INFO - All databases setup completed
+2025-05-11 01:15:54,050 - src.agents.travel_agent - INFO - Processing query: 
+        Planning a trip to hochiminh with the following details:
+        - Group: 2 adults, 1 children, 0 infants
+        - Budget: mid (approx. 10000000 VND)
+        - Duration: 10 days
+        - Season: summer
+        - Travel Style: family
+        
+        Preferences:
+        - Transportation: No specific preference
+        - Accommodation: Hotel
+        - Food: Vegetarian
+        - Places to visit: No specific preference
+        - Activities: Hiking
+        - Extra: No specific preference
+        Please suggest:
+        1. Suitable accommodations
+        2. Interesting activities and places to visit
+        3. Recommended restaurants and food options
+        
+        Consider:
+        - The travel style and preferences
+        - The season and weather conditions
+        - The budget constraints
+        - The duration of stay
+        - The location and its unique offerings
+        
+2025-05-11 01:15:54,050 - src.agents.travel_agent - DEBUG - Sending request to OpenAI...
+2025-05-11 01:15:55,997 - src.agents.travel_agent - INFO - OpenAI response: ChatCompletion(id='chatcmpl-BVj1nlCxxrJgXiu9t2Du4WZ9ArP5g', choices=[Choice(finish_reason='function_call', index=0, logprobs=None, message=ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Ho Chi Minh family hotel mid budget summer","top_k":15}', name='query_hotels'), tool_calls=None))], created=1746900955, model='gpt-4.1-mini-2025-04-14', object='chat.completion', service_tier='default', system_fingerprint='fp_79b79be41f', usage=CompletionUsage(completion_tokens=29, prompt_tokens=949, total_tokens=978, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+2025-05-11 01:15:55,997 - src.agents.travel_agent - INFO - Model response message: ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=FunctionCall(arguments='{"query_text":"Ho Chi Minh family hotel mid budget summer","top_k":15}', name='query_hotels'), tool_calls=None)
+2025-05-11 01:15:55,997 - src.agents.travel_agent - INFO - Function call: query_hotels
+2025-05-11 01:15:55,997 - src.agents.travel_agent - DEBUG - Function arguments: {'query_text': 'Ho Chi Minh family hotel mid budget summer', 'top_k': 15}
+2025-05-11 01:15:55,998 - src.agents.travel_agent - INFO - Querying all databases with context
+2025-05-11 01:15:55,998 - src.agents.travel_agent - INFO - Querying hotels with context: Ho Chi Minh family hotel mid budget summer
+2025-05-11 01:16:00,096 - src.agents.travel_agent - INFO - Added 15 hotel recommendations
+2025-05-11 01:16:00,097 - src.agents.travel_agent - INFO - Querying places with context: Ho Chi Minh family hotel mid budget summer
+2025-05-11 01:16:03,016 - src.agents.travel_agent - INFO - place_ids: ['place_003410', 'place_008121', 'place_007379', 'place_008592', 'place_010147', 'place_008904', 'place_009998', 'place_006037', 'place_004958', 'place_002520', 'place_001971', 'place_001507', 'place_004281', 'place_003754', 'place_006878', 'place_003297', 'place_002996', 'place_009331', 'place_010897', 'place_005555', 'place_004354', 'place_009405', 'place_010971', 'place_006952', 'place_001580', 'place_006111', 'place_003069', 'place_010220', 'place_008978', 'place_002044', 'place_003483', 'place_007453', 'place_008195', 'place_005032', 'place_008666', 'place_002594', 'place_003827', 'place_005628', 'place_002150', 'place_005139']
+2025-05-11 01:16:03,017 - src.agents.travel_agent - INFO - Added 40 place recommendations
+2025-05-11 01:16:03,017 - src.agents.travel_agent - INFO - Querying restaurants with context: Ho Chi Minh family hotel mid budget summer
+2025-05-11 01:16:03,017 - src.agents.travel_agent - INFO - Attempting to query FnB with text: Ho Chi Minh family hotel mid budget summer, top_k: 40
+2025-05-11 01:16:06,019 - src.agents.travel_agent - INFO - FnB query returned 40 results
+2025-05-11 01:16:06,019 - src.agents.travel_agent - INFO - Added 40 restaurant recommendations
+2025-05-11 01:16:06,019 - src.agents.travel_agent - INFO - Final result distribution: 15 hotels, 40 places, 40 restaurants
+2025-05-11 01:16:06,020 - src.services.suggest_api - INFO - Recommendation query processed successfully, got 95 items
+2025-05-11 01:16:06,020 - src.services.suggest_api - INFO - Grouped recommendations: 15 accommodations, 40 places, 40 restaurants
+2025-05-11 01:16:06,020 - src.services.suggest_api - INFO - Final response has 95 items
+2025-05-11 01:16:06,178 - src.services.genrate_plan_api - INFO - Received raw trip plan request: dict_keys(['destination_id', 'accommodation', 'places', 'restaurants'])
+2025-05-11 01:16:06,178 - src.services.genrate_plan_api - INFO - Extracted 15 accommodations, 40 places, and 40 restaurants
+2025-05-11 01:16:06,178 - src.services.genrate_plan_api - INFO - Destination identified as: hochiminh
+2025-05-11 01:16:06,178 - src.services.genrate_plan_api - INFO - Generating plan with destination: hochiminh
+2025-05-11 01:17:09,278 - src.services.genrate_plan_api - INFO - Generated plan: {'trip_name': 'Trip to Hochiminh', 'start_date': '2025-05-11', 'end_date': '2025-05-13', 'user_id': 'user123', 'destination_id': 'hochiminh', 'plan_by_day': [{'date': '2025-05-11', 'day_title': 'Ngày 1: Khám phá Sài Gòn hoa lệ', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'hotel_001800', 'type': 'accommodation', 'name': 'Homestay Long Chiều', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Bạn sẽ được tận hưởng không gian nghỉ dưỡng thoải mái.', 'location': 'Hồ Chí Minh', 'rating': 4.5, 'price': 850000.0, 'image_url': '', 'booking_link': '', 'room_info': 'Phòng tiêu chuẩn', 'tax_info': 'Đã bao gồm thuế', 'elderly_friendly': True, 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_003410', 'type': 'place', 'name': 'Lac Hong Tours', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Khám phá văn hóa Sài Gòn với nhiều hoạt động thú vị.', 'address': 'Hồ Chí Minh', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.5, 'price': 50000.0, 'image_url': '', 'url': ''}, {'id': 'place_010220', 'type': 'place', 'name': 'Saigon Adventure Tours', 'start_time': '15:30', 'end_time': '17:30', 'description': 'Trải nghiệm những tour thú vị giữa lòng thành phố.', 'address': 'Hồ Chí Minh', 'categories': 'adventure', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 100000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_001402', 'type': 'restaurant', 'name': 'Yu Chu', 'start_time': '19:00', 'end_time': '21:00', 'description': 'Thưởng thức ẩm thực Trung Hoa tinh tế.', 'address': 'Hồ Chí Minh', 'cuisines': 'Chinese', 'price_range': '100,000-300,000 VND', 'rating': 4.6, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['- Bắt đầu thăm thú địa điểm sớm từ 6-8h sáng để tránh đông đúc.', '- Sử dụng xe đạp hoặc đi bộ để khám phá thành phố.', '- Dự trù khoảng 600,000 VND cho một ngày du lịch.', '- Tránh các cửa hàng đắt tiền.', '- Chia sẻ bữa ăn để tiết kiệm chi phí.', '- Luôn mặc đồ lịch sự và tôn trọng văn hóa địa phương.']}, {'date': '2025-05-12', 'day_title': 'Ngày 2: Khám phá Sài Gòn sôi động', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_008121', 'type': 'place', 'name': 'Lac Hong Tours', 'start_time': '08:00', 'end_time': '09:30', 'description': 'Bạn sẽ được khám phá văn hóa Sài Gòn thú vị.', 'address': 'Quận 1, TP HCM', 'categories': 'sightseeing', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.5, 'price': 100000.0, 'image_url': '', 'url': ''}, {'id': 'place_007379', 'type': 'place', 'name': 'Đền Ngọc Hoàng', 'start_time': '09:45', 'end_time': '11:00', 'description': 'Chúng ta sẽ cầu nguyện tại đền linh thiêng này.', 'address': '73 Mai Thị Lựu, Quận 1, TP HCM', 'categories': 'temple', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.3, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_008592', 'type': 'place', 'name': 'Bảo tàng Chứng tích chiến tranh', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Hãy tìm hiểu lịch sử thông qua những hiện vật sống động.', 'address': '28 Võ Văn Tần, Quận 3, TP HCM', 'categories': 'museum', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 40000.0, 'image_url': '', 'url': ''}, {'id': 'place_010147', 'type': 'place', 'name': 'Chợ Bến Thành', 'start_time': '15:15', 'end_time': '17:00', 'description': 'Mua sắm và trải nghiệm ẩm thực đường phố tuyệt vời.', 'address': 'Phan Bội Châu, Quận 1, TP HCM', 'categories': 'market', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.2, 'price': 0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_001808', 'type': 'restaurant', 'name': 'Freedom Hostel Restaurant', 'start_time': '18:00', 'end_time': '19:30', 'description': 'Thưởng thức các món ăn phong phú trong không gian ấm cúng.', 'address': 'Quận 3, TP HCM', 'cuisines': 'Quốc tế', 'price_range': '100,000-300,000 VND', 'rating': 4.4, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}, {'id': 'restaurant_001355', 'type': 'restaurant', 'name': 'Ministry Social Club Saigon', 'start_time': '19:45', 'end_time': '21:30', 'description': 'Khám phá thực đơn đa dạng và âm nhạc sôi động.', 'address': 'Quận 1, TP HCM', 'cuisines': 'Quốc tế', 'price_range': '100,000-300,000 VND', 'rating': 4.7, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['Nên bắt đầu sớm từ 6-8h sáng khi tham quan Hầm Củ Chi để tránh đông đúc', 'Mua sắm thông minh tại Chợ Bến Thành để có giá hợp lý', 'Thử đồ ăn đường phố tại các quán ăn đông khách để an toàn']}, {'date': '2025-05-13', 'day_title': 'Ngày 3: Chinh phục phần còn lại của Sài Gòn', 'segments': [{'time_of_day': 'morning', 'activities': [{'id': 'place_004354', 'type': 'place', 'name': 'Saigon Adventure Tours', 'start_time': '08:00', 'end_time': '10:00', 'description': 'Tham gia tour khám phá Sài Gòn độc đáo.', 'address': 'TPHCM', 'categories': 'tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.7, 'price': 600000.0, 'image_url': '', 'url': ''}, {'id': 'place_009405', 'type': 'place', 'name': 'Saigon Adventure Tours', 'start_time': '10:30', 'end_time': '12:00', 'description': 'Khám phá khuôn viên đặc sắc và văn hóa địa phương.', 'address': 'TPHCM', 'categories': 'tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.8, 'price': 700000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'afternoon', 'activities': [{'id': 'place_006952', 'type': 'place', 'name': 'Saigon Adventure Tours', 'start_time': '13:00', 'end_time': '15:00', 'description': 'Tham gia các hoạt động thú vị và giáo dục.', 'address': 'TPHCM', 'categories': 'tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.6, 'price': 650000.0, 'image_url': '', 'url': ''}, {'id': 'place_001580', 'type': 'place', 'name': 'Saigon Adventure Tours', 'start_time': '15:30', 'end_time': '17:00', 'description': 'Thưởng thức bản sắc địa phương qua mỗi con đường.', 'address': 'TPHCM', 'categories': 'tour', 'duration': '2h', 'opening_hours': '08:00-17:00', 'rating': 4.9, 'price': 750000.0, 'image_url': '', 'url': ''}]}, {'time_of_day': 'evening', 'activities': [{'id': 'restaurant_002225', 'type': 'restaurant', 'name': "Saigon's Book Hotel & Restaurant", 'start_time': '18:00', 'end_time': '20:00', 'description': 'Thưởng thức bữa tối ngon miệng.', 'address': 'TPHCM', 'cuisines': 'homestyle', 'price_range': '100,000-300,000 VND', 'rating': 4.5, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}, {'id': 'restaurant_000933', 'type': 'restaurant', 'name': 'Saigon SkyBar', 'start_time': '20:30', 'end_time': '22:00', 'description': 'Thưởng thức cocktail tại tầng thượng.', 'address': 'TPHCM', 'cuisines': 'bar', 'price_range': '100,000-300,000 VND', 'rating': 4.7, 'phone': '', 'services': ['đặt bàn'], 'image_url': '', 'url': ''}]}], 'daily_tips': ['Nên đến sớm cho tour buổi sáng để tránh kẹt xe.', 'Mang đồ ăn nhẹ và nước uống cho tour buổi chiều.', 'Đặt chỗ trước cho tour buổi tối để tránh chờ đợi lâu và tăng giá cho du khách nước ngoài.']}]}
+2025-05-11 01:17:09,279 - src.services.genrate_plan_api - INFO - Trip plan request processed successfully
+2025-05-11 06:57:51,929 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 06:59:34,625 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 06:59:37,355 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 06:59:42,687 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 06:59:50,840 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:01:42,652 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:09:07,148 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 63, in __init__
+    self.review_agent = TravelReviewer()
+                        ^^^^^^^^^^^^^^^^
+  File "/app/src/agents/review_agent.py", line 38, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/_api/deprecation.py", line 216, in warn_if_direct_instance
+    return wrapped(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:09:23,807 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:17:57,109 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 52, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:37:15,964 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 51, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 07:40:26,958 - app - ERROR - Error registering routers: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+Traceback (most recent call last):
+  File "/app/app.py", line 30, in register_routers
+    from src.services.genrate_plan_api import router as trip_plan_router
+  File "/app/src/services/genrate_plan_api.py", line 17, in <module>
+    model = PlanModel()
+            ^^^^^^^^^^^
+  File "/app/src/agents/plan_agent.py", line 51, in __init__
+    self.llm = ChatOpenAI(
+               ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/langchain_core/load/serializable.py", line 125, in __init__
+    super().__init__(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_mock_val_ser.py", line 100, in __getattr__
+    raise PydanticUserError(self._error_message, code=self._code)
+pydantic.errors.PydanticUserError: `ChatOpenAI` is not fully defined; you should define `BaseCache`, then call `ChatOpenAI.model_rebuild()`.
+
+For further information visit https://errors.pydantic.dev/2.11/u/class-not-fully-defined
+2025-05-11 14:53:53,162 - __main__ - INFO - All routers registered successfully
+2025-05-11 14:54:31,638 - __main__ - INFO - All routers registered successfully
+2025-05-11 14:54:38,278 - __mp_main__ - INFO - All routers registered successfully
+2025-05-11 14:54:38,303 - app - INFO - All routers registered successfully

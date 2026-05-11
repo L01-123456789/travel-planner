@@ -1,0 +1,3464 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "A modern RESTful API for managing travel plans, including trips, destinations, accommodations, places, and restaurants.",
+        "title": "Travel Planning API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support Team",
+            "url": "http://www.example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "handles user login requests",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TokenResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "description": "handles user registration requests",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Register",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TokenResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/activity/{id}": {
+            "get": {
+                "description": "Get all comments for a specific activity",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get comments by activity ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Activity ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comments for the activity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid activity ID",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/comment/create": {
+            "post": {
+                "description": "Create a new comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Create a new comment",
+                "parameters": [
+                    {
+                        "description": "Comment Details",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Comment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns comment",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Comment"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/detail/accommodation/{id}": {
+            "get": {
+                "description": "Retrieve detailed information about a specific accommodation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "detail"
+                ],
+                "summary": "Get accommodation details by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Accommodation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ActivityDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/detail/place/{id}": {
+            "get": {
+                "description": "Retrieve detailed information about a specific place",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "detail"
+                ],
+                "summary": "Get place details by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Place ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ActivityDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/detail/restaurant/{id}": {
+            "get": {
+                "description": "Retrieve detailed information about a specific restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "detail"
+                ],
+                "summary": "Get restaurant details by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.ActivityDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/add": {
+            "post": {
+                "description": "Add an expense to a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Add trip expense",
+                "parameters": [
+                    {
+                        "description": "Trip expense details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripExpenseDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.TripExpense"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/balance/{tripId}": {
+            "get": {
+                "description": "Get the balance for each user in a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Get expense balances",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip ID",
+                        "name": "tripId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ExpenseBalanceDTO"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/summary/{tripId}": {
+            "get": {
+                "description": "Get a summary of all expenses for a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Get trip expense summary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip ID",
+                        "name": "tripId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripExpenseSummaryDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/user/add": {
+            "post": {
+                "description": "Add a user to the expense splitting for a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Add a user to expense splitting",
+                "parameters": [
+                    {
+                        "description": "Expense user details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ExpenseUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/users/{tripId}": {
+            "get": {
+                "description": "Get all users participating in expense splitting for a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Get expense users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip ID",
+                        "name": "tripId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.ExpenseUser"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/expense/{tripId}": {
+            "get": {
+                "description": "Get all expenses for a trip",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "expense"
+                ],
+                "summary": "Get trip expenses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip ID",
+                        "name": "tripId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.TripExpense"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/insert_csv/destination": {
+            "post": {
+                "description": "Import destination data from a CSV file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InsertData"
+                ],
+                "summary": "Insert Destination Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/insert_csv/hotel": {
+            "post": {
+                "description": "Import hotel data from a CSV file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InsertData"
+                ],
+                "summary": "Insert Hotel Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/insert_csv/place": {
+            "post": {
+                "description": "Import place data from a CSV file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InsertData"
+                ],
+                "summary": "Insert Place Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/insert_csv/restaurant": {
+            "post": {
+                "description": "Import restaurant data from a CSV file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InsertData"
+                ],
+                "summary": "Insert Restaurant Data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/suggest/accommodations": {
+            "post": {
+                "description": "Get accommodation suggestions based on travel preferences",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggest"
+                ],
+                "summary": "Suggest accommodations",
+                "parameters": [
+                    {
+                        "description": "Travel Preferences",
+                        "name": "preference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TravelPreference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.ActivityDetail"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/suggest/comment": {
+            "post": {
+                "description": "Get suggestions based on travel preference and comment activity using AI",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggest"
+                ],
+                "summary": "Suggest by comment",
+                "parameters": [
+                    {
+                        "description": "Suggest with Comment Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuggestWithCommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.SuggestWithCommentResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/suggest/places": {
+            "post": {
+                "description": "Get activity suggestions based on travel preferences",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggest"
+                ],
+                "summary": "Suggest places",
+                "parameters": [
+                    {
+                        "description": "Travel Preferences",
+                        "name": "preference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TravelPreference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.ActivityDetail"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/suggest/restaurants": {
+            "post": {
+                "description": "Get restaurant suggestions based on travel preferences",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggest"
+                ],
+                "summary": "Suggest restaurants",
+                "parameters": [
+                    {
+                        "description": "Travel Preferences",
+                        "name": "preference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TravelPreference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.ActivityDetail"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/suggest/trip": {
+            "post": {
+                "description": "Get comprehensive suggestions based on travel preferences for accommodations, places, and restaurants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "suggest"
+                ],
+                "summary": "Suggest trip",
+                "parameters": [
+                    {
+                        "description": "Travel Preferences",
+                        "name": "preference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.TravelPreference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suggested trip",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.TripDTOByDate"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/todos": {
+            "get": {
+                "description": "get all todos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Get all todos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.Todo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create new todo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Create a todo",
+                "parameters": [
+                    {
+                        "description": "Create todo",
+                        "name": "todo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TodoCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Todo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/todos/{id}": {
+            "get": {
+                "description": "get todo by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Get a todo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Todo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update todo by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Update a todo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update todo",
+                        "name": "todo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TodoCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.Todo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete todo by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Delete a todo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/activity": {
+            "put": {
+                "description": "Update an activity (accommodation, restaurant, or place) based on its type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Update an activity",
+                "parameters": [
+                    {
+                        "description": "Updated Activity Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Activity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Activity updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/create": {
+            "post": {
+                "description": "Create a new trip with destinations, accommodations, activities, and restaurants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Create a new trip",
+                "parameters": [
+                    {
+                        "description": "Trip Details",
+                        "name": "trip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns trip ID",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/get_plan": {
+            "post": {
+                "description": "Get AI-generated trip suggestions based on user preferences",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Get trip suggestions",
+                "parameters": [
+                    {
+                        "description": "Trip Suggestion Parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripSuggestionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suggested trip",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.TripDTOByDate"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/me": {
+            "get": {
+                "description": "Retrieve all trips associated with the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Get trips by user ID",
+                "responses": {
+                    "200": {
+                        "description": "List of trips",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TripDTOByDate"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "No trips found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/save": {
+            "put": {
+                "description": "Update an existing trip with new details including destinations, accommodations, activities, and restaurants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Save changes to an existing trip",
+                "parameters": [
+                    {
+                        "description": "Trip Details",
+                        "name": "trip",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TripDTOByDate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/trip/{id}": {
+            "get": {
+                "description": "Get complete trip details including destinations, accommodations, activities, and restaurants",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "trip"
+                ],
+                "summary": "Get trip details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Trip ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip details",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.TripDTOByDate"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid trip ID",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "get the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Show the status of server.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AccommodationSuggestion": {
+            "type": "object",
+            "properties": {
+                "accommodation_id": {
+                    "type": "string"
+                },
+                "booking_link": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "elderly_friendly": {
+                    "type": "boolean"
+                },
+                "image_url": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Image"
+                    }
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "room_info": {
+                    "type": "string"
+                },
+                "room_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RoomType"
+                    }
+                },
+                "tax_info": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AccommodationsSuggestion": {
+            "type": "object",
+            "properties": {
+                "accommodations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.AccommodationSuggestion"
+                    }
+                }
+            }
+        },
+        "dto.Activity": {
+            "type": "object",
+            "properties": {
+                "activity_id": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "start_time": {
+                    "description": "\"HH:mm\" format",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "e.g., \"place\", \"accommodation\", \"restaurant\"",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ActivityDetail": {
+            "type": "object",
+            "properties": {
+                "additional_info": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "opening_hours": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Comment": {
+            "type": "object",
+            "properties": {
+                "activity_id": {
+                    "type": "string"
+                },
+                "comment_message": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ExpenseBalanceDTO": {
+            "type": "object",
+            "properties": {
+                "net_balance": {
+                    "description": "positive means they are owed money, negative means they owe money",
+                    "type": "number"
+                },
+                "total_owed": {
+                    "type": "number"
+                },
+                "total_paid": {
+                    "type": "number"
+                },
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Transaction"
+                    }
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ExpenseUserDTO": {
+            "type": "object",
+            "properties": {
+                "custom_amount": {
+                    "description": "Amount for custom split",
+                    "type": "number"
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PlaceSuggestion": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "categories": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Image"
+                    }
+                },
+                "main_image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "opening_hours": {
+                    "type": "string"
+                },
+                "place_id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PlacesSuggestion": {
+            "type": "object",
+            "properties": {
+                "places": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PlaceSuggestion"
+                    }
+                }
+            }
+        },
+        "dto.PlanByDay": {
+            "type": "object",
+            "properties": {
+                "daily_tips": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date": {
+                    "description": "\"YYYY-MM-DD\"",
+                    "type": "string"
+                },
+                "day_title": {
+                    "description": "e.g., \"Ngày 1: Check-in \u0026 khám phá biển\"",
+                    "type": "string"
+                },
+                "segments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Segment"
+                    }
+                }
+            }
+        },
+        "dto.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RestaurantSuggestion": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cuisines": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "is_booking": {
+                    "type": "boolean"
+                },
+                "is_delivery": {
+                    "type": "boolean"
+                },
+                "is_opening": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "$ref": "#/definitions/model.Location"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "opening_hours": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "price_range": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "reviews": {
+                    "type": "string"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Service"
+                    }
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RestaurantsSuggestion": {
+            "type": "object",
+            "properties": {
+                "restaurants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.RestaurantSuggestion"
+                    }
+                }
+            }
+        },
+        "dto.Segment": {
+            "type": "object",
+            "properties": {
+                "activities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Activity"
+                    }
+                },
+                "time_of_day": {
+                    "description": "e.g., \"morning\", \"afternoon\", \"evening\"",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SuggestWithCommentRequest": {
+            "type": "object",
+            "properties": {
+                "activity": {
+                    "$ref": "#/definitions/dto.Activity"
+                },
+                "travel_preference": {
+                    "$ref": "#/definitions/model.TravelPreference"
+                }
+            }
+        },
+        "dto.SuggestWithCommentResponse": {
+            "type": "object",
+            "properties": {
+                "suggestion_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Activity"
+                    }
+                },
+                "suggestion_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TodoCreate": {
+            "description": "Todo creation request body",
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "description": "Detailed description of the todo item",
+                    "type": "string",
+                    "example": "Write comprehensive documentation for the API endpoints"
+                },
+                "status": {
+                    "description": "Current status of the todo item (pending, in-progress, completed)",
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "in-progress",
+                        "completed"
+                    ],
+                    "example": "pending"
+                },
+                "title": {
+                    "description": "Title of the todo item",
+                    "type": "string",
+                    "example": "Complete project documentation"
+                }
+            }
+        },
+        "dto.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "The access token, used for subsequent requests.",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "description": "Optional refresh token, used for obtaining new access tokens.",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "from_user_id": {
+                    "type": "string"
+                },
+                "from_username": {
+                    "type": "string"
+                },
+                "to_user_id": {
+                    "type": "string"
+                },
+                "to_username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripAccommodationDTO": {
+            "type": "object",
+            "properties": {
+                "accommodation_id": {
+                    "type": "string"
+                },
+                "check_in_date": {
+                    "type": "string"
+                },
+                "check_out_date": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_accommodation_id": {
+                    "type": "string"
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripDTO": {
+            "type": "object",
+            "properties": {
+                "budget": {
+                    "type": "number"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "trip_destinations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TripDestinationDTO"
+                    }
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "trip_name": {
+                    "type": "string"
+                },
+                "trip_status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripDTOByDate": {
+            "type": "object",
+            "properties": {
+                "destination_id": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "description": "\"YYYY-MM-DD\"",
+                    "type": "string"
+                },
+                "plan_by_day": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PlanByDay"
+                    }
+                },
+                "start_date": {
+                    "description": "\"YYYY-MM-DD\"",
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "trip_name": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripDestinationDTO": {
+            "type": "object",
+            "properties": {
+                "accommodations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TripAccommodationDTO"
+                    }
+                },
+                "arrival_date": {
+                    "type": "string"
+                },
+                "departure_date": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "order_num": {
+                    "type": "integer"
+                },
+                "places": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TripPlaceDTO"
+                    }
+                },
+                "restaurants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TripRestaurantDTO"
+                    }
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripExpenseDTO": {
+            "type": "object",
+            "properties": {
+                "expense_amount": {
+                    "type": "number"
+                },
+                "expense_date": {
+                    "type": "string"
+                },
+                "expense_id": {
+                    "type": "string"
+                },
+                "expense_name": {
+                    "type": "string"
+                },
+                "expense_type": {
+                    "type": "string"
+                },
+                "expense_users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ExpenseUserDTO"
+                    }
+                },
+                "paid_by_user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "paid_by_user_id": {
+                    "type": "string"
+                },
+                "split_type": {
+                    "description": "equal, percentage, custom",
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripExpenseSummaryDTO": {
+            "type": "object",
+            "properties": {
+                "balances": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ExpenseBalanceDTO"
+                    }
+                },
+                "expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TripExpenseDTO"
+                    }
+                },
+                "total_expense": {
+                    "type": "number"
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "trip_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripPlaceDTO": {
+            "type": "object",
+            "properties": {
+                "end_time": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "place_id": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "scheduled_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_place_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripRestaurantDTO": {
+            "type": "object",
+            "properties": {
+                "end_time": {
+                    "type": "string"
+                },
+                "meal_date": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "reservation_info": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TripSuggestionRequest": {
+            "type": "object",
+            "properties": {
+                "accommodation": {
+                    "$ref": "#/definitions/dto.AccommodationsSuggestion"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "places": {
+                    "$ref": "#/definitions/dto.PlacesSuggestion"
+                },
+                "restaurants": {
+                    "$ref": "#/definitions/dto.RestaurantsSuggestion"
+                }
+            }
+        },
+        "model.Accommodation": {
+            "type": "object",
+            "properties": {
+                "accommodation_id": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "elderly_friendly": {
+                    "type": "boolean"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Image"
+                    }
+                },
+                "link": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "room_info": {
+                    "type": "string"
+                },
+                "room_types": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RoomType"
+                    }
+                },
+                "tax_info": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Budget": {
+            "type": "object",
+            "properties": {
+                "exact_budget": {
+                    "type": "number"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Comment": {
+            "type": "object",
+            "properties": {
+                "comment_id": {
+                    "type": "string"
+                },
+                "comment_message": {
+                    "type": "string"
+                },
+                "trip_accommodation_id": {
+                    "type": "string"
+                },
+                "trip_place_id": {
+                    "type": "string"
+                },
+                "trip_restaurant_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Destination": {
+            "type": "object",
+            "properties": {
+                "accommodations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Accommodation"
+                    }
+                },
+                "best_season": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "climate": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "places": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Place"
+                    }
+                },
+                "restaurants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Restaurant"
+                    }
+                },
+                "travel_preferences": {
+                    "description": "New association with TravelPreference (one-to-many)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TravelPreference"
+                    }
+                }
+            }
+        },
+        "model.ExpenseUser": {
+            "type": "object",
+            "properties": {
+                "expense_user_id": {
+                    "type": "string"
+                },
+                "expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripExpense"
+                    }
+                },
+                "income": {
+                    "type": "number"
+                },
+                "outcome": {
+                    "type": "number"
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Corrected User relationship",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Image": {
+            "type": "object",
+            "properties": {
+                "alt": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Location": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number"
+                },
+                "lon": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.People": {
+            "type": "object",
+            "properties": {
+                "adults": {
+                    "type": "integer"
+                },
+                "children": {
+                    "type": "integer"
+                },
+                "infants": {
+                    "type": "integer"
+                },
+                "pets": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.PersonalOption": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "\"places\", \"activities\", \"accommodation\"",
+                    "type": "string"
+                }
+            }
+        },
+        "model.Place": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "categories": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Image"
+                    }
+                },
+                "main_image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "opening_hours": {
+                    "type": "string"
+                },
+                "place_id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Restaurant": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cuisines": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "is_booking": {
+                    "type": "boolean"
+                },
+                "is_delivery": {
+                    "type": "boolean"
+                },
+                "is_opening": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "$ref": "#/definitions/model.Location"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "opening_hours": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "price_range": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "reviews": {
+                    "type": "string"
+                },
+                "services": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Service"
+                    }
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RoomType": {
+            "type": "object",
+            "properties": {
+                "bed_type": {
+                    "type": "string"
+                },
+                "conditions": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "occupancy": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "tax_and_fee": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Service": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SplitExpense": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "expense_id": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Todo": {
+            "description": "Todo represents a single todo item with its details",
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "Timestamp when the todo was created",
+                    "type": "string",
+                    "example": "2024-03-15T08:00:00Z"
+                },
+                "description": {
+                    "description": "Detailed description of the todo item",
+                    "type": "string",
+                    "example": "Write comprehensive documentation for the API endpoints"
+                },
+                "id": {
+                    "description": "Unique identifier of the todo",
+                    "type": "integer",
+                    "example": 1
+                },
+                "status": {
+                    "description": "Current status of the todo item (pending, in-progress, completed)",
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "in-progress",
+                        "completed"
+                    ],
+                    "example": "pending"
+                },
+                "title": {
+                    "description": "Title of the todo item",
+                    "type": "string",
+                    "example": "Complete project documentation"
+                },
+                "updated_at": {
+                    "description": "Timestamp when the todo was last updated",
+                    "type": "string",
+                    "example": "2024-03-15T08:00:00Z"
+                }
+            }
+        },
+        "model.TravelPreference": {
+            "type": "object",
+            "properties": {
+                "budget": {
+                    "$ref": "#/definitions/model.Budget"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "people": {
+                    "$ref": "#/definitions/model.People"
+                },
+                "personal_options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.PersonalOption"
+                    }
+                },
+                "travel_preference_id": {
+                    "type": "string"
+                },
+                "travel_time": {
+                    "$ref": "#/definitions/model.TravelTime"
+                },
+                "trip_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TravelTime": {
+            "type": "object",
+            "properties": {
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Trip": {
+            "type": "object",
+            "properties": {
+                "budget": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "expense_users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ExpenseUser"
+                    }
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "travel_preference": {
+                    "description": "New association with TravelPreference (one-to-one)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.TravelPreference"
+                        }
+                    ]
+                },
+                "trip_destinations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripDestination"
+                    }
+                },
+                "trip_expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripExpense"
+                    }
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "trip_name": {
+                    "type": "string"
+                },
+                "trip_status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "Associations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    ]
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TripAccommodation": {
+            "type": "object",
+            "properties": {
+                "accommodation": {
+                    "$ref": "#/definitions/model.Accommodation"
+                },
+                "accommodation_id": {
+                    "type": "string"
+                },
+                "check_in_date": {
+                    "type": "string"
+                },
+                "check_out_date": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_accommodation_id": {
+                    "type": "string"
+                },
+                "trip_destination": {
+                    "description": "Associations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.TripDestination"
+                        }
+                    ]
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TripDestination": {
+            "type": "object",
+            "properties": {
+                "arrival_date": {
+                    "type": "string"
+                },
+                "departure_date": {
+                    "type": "string"
+                },
+                "destination": {
+                    "$ref": "#/definitions/model.Destination"
+                },
+                "destination_id": {
+                    "type": "string"
+                },
+                "order_num": {
+                    "type": "integer"
+                },
+                "trip": {
+                    "description": "Associations\nReference to the Trip (from the same package).",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Trip"
+                        }
+                    ]
+                },
+                "trip_accommodations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripAccommodation"
+                    }
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_id": {
+                    "type": "string"
+                },
+                "trip_places": {
+                    "description": "Other associations as slices.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripPlace"
+                    }
+                },
+                "trip_restaurants": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripRestaurant"
+                    }
+                }
+            }
+        },
+        "model.TripExpense": {
+            "type": "object",
+            "properties": {
+                "expense_amount": {
+                    "type": "number"
+                },
+                "expense_date": {
+                    "type": "string"
+                },
+                "expense_id": {
+                    "type": "string"
+                },
+                "expense_name": {
+                    "type": "string"
+                },
+                "expense_type": {
+                    "type": "string"
+                },
+                "expense_users": {
+                    "description": "Updated association with proper join table configuration",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ExpenseUser"
+                    }
+                },
+                "paid_by_user": {
+                    "description": "Relationships",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    ]
+                },
+                "paid_by_user_id": {
+                    "type": "string"
+                },
+                "split_expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.SplitExpense"
+                    }
+                },
+                "trip": {
+                    "$ref": "#/definitions/model.Trip"
+                },
+                "trip_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TripPlace": {
+            "type": "object",
+            "properties": {
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "place": {
+                    "$ref": "#/definitions/model.Place"
+                },
+                "place_id": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "scheduled_date": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_destination": {
+                    "description": "Update associations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.TripDestination"
+                        }
+                    ]
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_place_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.TripRestaurant": {
+            "type": "object",
+            "properties": {
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "meal_date": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "price_ai_estimate": {
+                    "type": "number"
+                },
+                "reservation_info": {
+                    "type": "string"
+                },
+                "restaurant": {
+                    "$ref": "#/definitions/model.Restaurant"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "trip_destination": {
+                    "description": "Associations with proper GORM foreign key definitions",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.TripDestination"
+                        }
+                    ]
+                },
+                "trip_destination_id": {
+                    "type": "string"
+                },
+                "trip_restaurant_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "expense_users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ExpenseUser"
+                    }
+                },
+                "expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.TripExpense"
+                    }
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "trips": {
+                    "description": "Relationships",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Trip"
+                    }
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Enter the token with the `Bearer: ` prefix, e.g. \"Bearer abcde12345\".",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "tags": [
+        {
+            "description": "Operations about login and register",
+            "name": "auth",
+            "externalDocs": {
+                "description": "Detailed information about auth operations",
+                "url": "http://example.com/docs/auth"
+            }
+        },
+        {
+            "description": "API health check operations",
+            "name": "health"
+        },
+        {
+            "description": "Operations about travel suggestions",
+            "name": "suggest",
+            "externalDocs": {
+                "description": "Detailed information about suggestion operations",
+                "url": "http://example.com/docs/suggest"
+            }
+        },
+        {
+            "description": "Operations about trips and travel plans",
+            "name": "trip",
+            "externalDocs": {
+                "description": "Detailed information about trip operations",
+                "url": "http://example.com/docs/trip"
+            }
+        },
+        {
+            "description": "Operations about comments",
+            "name": "comment",
+            "externalDocs": {
+                "description": "Detailed information about comment operations",
+                "url": "http://example.com/docs/comment"
+            }
+        },
+        {
+            "description": "Operations for importing data from CSV files",
+            "name": "InsertData"
+        },
+        {
+            "description": "Operations about trip expenses and expense splitting",
+            "name": "expense",
+            "externalDocs": {
+                "description": "Detailed information about expense operations",
+                "url": "http://example.com/docs/expense"
+            }
+        }
+    ]
+}

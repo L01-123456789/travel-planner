@@ -1,0 +1,1 @@
+python foody_crawler.py --location hochiminh --total-items 50
