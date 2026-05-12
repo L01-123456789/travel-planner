@@ -1,0 +1,38 @@
+name: Mobile CI
+
+on:
+  push:
+    paths:
+      - "travel-planner/**"
+  pull_request:
+    paths:
+      - "travel-planner/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: travel-planner
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: travel-planner/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+  # Optional: Enable EAS build (and automatic sourcemap upload) by adding secrets:
+  # - EXPO_TOKEN
+  # - SENTRY_AUTH_TOKEN
+  # and then adding a second job that runs `npx eas-cli@latest build ...`.
