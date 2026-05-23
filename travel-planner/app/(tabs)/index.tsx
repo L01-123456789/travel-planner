@@ -8,11 +8,13 @@ import {
 } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const textColor = "#0E1114";
   const mutedTextColor = "#7B858F";
   const cardColor = "#FFFFFF";
@@ -78,6 +80,7 @@ export default function HomeScreen() {
             style={[styles.ctaButton, { backgroundColor: accent }]}
             onPress={() => {
               Sentry.captureMessage("Hero CTA clicked");
+              router.push("/(tabs)/explore");
             }}
           >
             <ThemedText style={styles.ctaText}>Kham pha ngay</ThemedText>
@@ -94,9 +97,11 @@ export default function HomeScreen() {
             Kham pha dia diem pho bien
           </ThemedText>
         </View>
-        <ThemedText style={[styles.linkText, { color: accent }]}>
-          Xem tat ca
-        </ThemedText>
+        <Pressable onPress={() => router.push("/(tabs)/explore")}>
+          <ThemedText style={[styles.linkText, { color: accent }]}>
+            Xem tat ca
+          </ThemedText>
+        </Pressable>
       </View>
 
       <ScrollView
@@ -105,10 +110,11 @@ export default function HomeScreen() {
         style={styles.cardRow}
       >
         {destinations.map((item) => (
-          <View
+          <Pressable
             key={item.id}
             style={[styles.destinationCard, { backgroundColor: cardColor }]}
             accessibilityRole="image"
+            onPress={() => router.push("/(tabs)/explore")}
           >
             <Image
               source={item.image}
@@ -141,7 +147,7 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
             </View>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
 

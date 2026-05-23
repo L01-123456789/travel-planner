@@ -1,4 +1,8 @@
 export type OnboardingState = {
+  destination: {
+    id: string;
+    name: string;
+  } | null;
   people: {
     adult: number;
     child: number;
@@ -15,6 +19,7 @@ export type OnboardingState = {
 };
 
 const state: OnboardingState = {
+  destination: null,
   people: {
     adult: 2,
     child: 0,
@@ -33,6 +38,7 @@ const state: OnboardingState = {
 export function getOnboardingState(): OnboardingState {
   return {
     ...state,
+    destination: state.destination ? { ...state.destination } : null,
     people: { ...state.people },
     dates: { ...state.dates },
     interests: [...state.interests],
@@ -42,6 +48,9 @@ export function getOnboardingState(): OnboardingState {
 export function updateOnboardingState(
   partial: Partial<OnboardingState>,
 ): OnboardingState {
+  if (partial.destination !== undefined) {
+    state.destination = partial.destination ? { ...partial.destination } : null;
+  }
   if (partial.people) {
     state.people = { ...state.people, ...partial.people };
   }
@@ -58,6 +67,7 @@ export function updateOnboardingState(
 }
 
 export function resetOnboardingState(): OnboardingState {
+  state.destination = null;
   state.people = { adult: 2, child: 0, infant: 0, pet: 0 };
   state.budget = 5000000;
   state.dates = { start: "2023-10-15", end: "2023-10-18", flexible: false };

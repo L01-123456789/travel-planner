@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  type GestureResponderEvent,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -37,17 +38,22 @@ export default function TripInfoScreen() {
 
   const formatter = useMemo(() => new Intl.NumberFormat("vi-VN"), []);
 
-  const handleTrackPress = (event: { nativeEvent: { locationX: number } }) => {
+  const updateBudgetFromX = (locationX: number) => {
     if (!trackWidth) {
       return;
     }
-    const ratio = Math.min(
-      1,
-      Math.max(0, event.nativeEvent.locationX / trackWidth),
-    );
+    const ratio = Math.min(1, Math.max(0, locationX / trackWidth));
     const rawValue = BUDGET_MIN + (BUDGET_MAX - BUDGET_MIN) * ratio;
     const steppedValue = Math.round(rawValue / STEP) * STEP;
     setBudget(steppedValue);
+  };
+
+  const handleTrackPress = (event: GestureResponderEvent) => {
+    updateBudgetFromX(event.nativeEvent.locationX);
+  };
+
+  const handleTrackMove = (event: GestureResponderEvent) => {
+    updateBudgetFromX(event.nativeEvent.locationX);
   };
 
   const handleTrackLayout = (event: LayoutChangeEvent) => {
@@ -104,7 +110,7 @@ export default function TripInfoScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.iconButton}>
+          <Pressable style={styles.iconButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={20} color={ACCENT} />
           </Pressable>
           <Text style={styles.headerTitle}>Thông tin chuyến đi</Text>
@@ -176,10 +182,12 @@ export default function TripInfoScreen() {
             </Text>
           </View>
 
-          <Pressable
+          <View
             style={styles.sliderTrack}
             onLayout={handleTrackLayout}
-            onPress={handleTrackPress}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={handleTrackPress}
+            onResponderMove={handleTrackMove}
           >
             <View
               style={[styles.sliderFill, { width: `${progressRatio * 100}%` }]}
@@ -190,7 +198,7 @@ export default function TripInfoScreen() {
                 { left: Math.max(0, trackWidth * progressRatio - 10) },
               ]}
             />
-          </Pressable>
+          </View>
           <View style={styles.sliderLabels}>
             <Text style={styles.sliderLabelText}>0</Text>
             <Text style={styles.sliderLabelText}>10.000.000+</Text>

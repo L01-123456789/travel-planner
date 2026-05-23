@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
+  Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,40 +25,41 @@ const TRACK = "#DDE3E1";
 
 const CARD_RADIUS = 18;
 
+const BASE_INTERESTS = [
+  {
+    id: "nature",
+    title: "Cảnh quan thiên nhiên",
+    image: require("@/assets/images/1.png"),
+  },
+  {
+    id: "adventure",
+    title: "Hoạt động mạo hiểm",
+    image: require("@/assets/images/2.png"),
+  },
+  {
+    id: "history",
+    title: "Di tích lịch sử",
+    image: require("@/assets/images/2.png"),
+  },
+  {
+    id: "hidden",
+    title: "Địa điểm ít người biết tới",
+    image: require("@/assets/images/1.png"),
+  },
+  {
+    id: "food",
+    title: "Ẩm thực địa phương",
+    image: require("@/assets/images/2.png"),
+  },
+];
+
 export default function InterestsScreen() {
   const [selected, setSelected] = useState<string[]>(["nature", "hidden"]);
+  const [items, setItems] = useState(BASE_INTERESTS);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newInterestName, setNewInterestName] = useState("");
+  const [newInterestNote, setNewInterestNote] = useState("");
   const router = useRouter();
-
-  const data = useMemo(
-    () => [
-      {
-        id: "nature",
-        title: "Cảnh quan thiên nhiên",
-        image: require("@/assets/images/1.png"),
-      },
-      {
-        id: "adventure",
-        title: "Hoạt động mạo hiểm",
-        image: require("@/assets/images/2.png"),
-      },
-      {
-        id: "history",
-        title: "Di tích lịch sử",
-        image: require("@/assets/images/2.png"),
-      },
-      {
-        id: "hidden",
-        title: "Địa điểm ít người biết tới",
-        image: require("@/assets/images/1.png"),
-      },
-      {
-        id: "food",
-        title: "Ẩm thực địa phương",
-        image: require("@/assets/images/2.png"),
-      },
-    ],
-    [],
-  );
 
   const toggle = (id: string) => {
     setSelected((current) =>
@@ -66,16 +69,45 @@ export default function InterestsScreen() {
     );
   };
 
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+    setNewInterestName("");
+    setNewInterestNote("");
+  };
+
   const handleCreatePlan = () => {
     updateOnboardingState({ interests: selected });
-    router.replace("/(tabs)");
+    router.replace("/plan-creating");
+  };
+
+  const handleAddInterest = () => {
+    const trimmed = newInterestName.trim();
+    if (!trimmed) {
+      return;
+    }
+    const baseId = trimmed.toLowerCase().replace(/\s+/g, "-");
+    let uniqueId = baseId;
+    let counter = 1;
+    while (items.some((item) => item.id === uniqueId)) {
+      counter += 1;
+      uniqueId = `${baseId}-${counter}`;
+    }
+
+    const created = {
+      id: uniqueId,
+      title: trimmed,
+      image: require("@/assets/images/2.png"),
+    };
+    setItems((current) => [...current, created]);
+    setSelected((current) => [...current, created.id]);
+    closeAddModal();
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.iconButton}>
+          <Pressable style={styles.iconButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={20} color={ACCENT} />
           </Pressable>
           <Text style={styles.brandText}>The Curator</Text>
@@ -93,7 +125,7 @@ export default function InterestsScreen() {
         </Text>
 
         <View style={styles.grid}>
-          {data.map((item, index) => {
+          {items.map((item, index) => {
             const isSelected = selected.includes(item.id);
             return (
               <Pressable
@@ -122,7 +154,10 @@ export default function InterestsScreen() {
               </Pressable>
             );
           })}
-          <Pressable style={[styles.card, styles.addCard]}>
+          <Pressable
+            style={[styles.card, styles.addCard]}
+            onPress={() => setIsAddModalOpen(true)}
+          >
             <View style={styles.addCircle}>
               <Ionicons name="add" size={20} color={TEXT_DARK} />
             </View>
@@ -143,6 +178,61 @@ export default function InterestsScreen() {
           <Ionicons name="sparkles" size={16} color="#FFFFFF" />
         </Pressable>
       </ScrollView>
+
+      <Modal
+        transparent
+        animationType="fade"
+        visible={isAddModalOpen}
+        onRequestClose={closeAddModal}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <View style={styles.modalHeader}>
+              <View>
+                <Text style={styles.modalTitle}>Thêm sở thích cá nhân</Text>
+                <View style={styles.modalUnderline} />
+              </View>
+              <Pressable style={styles.modalClose} onPress={closeAddModal}>
+                <Ionicons name="close" size={16} color={TEXT_DARK} />
+              </Pressable>
+            </View>
+
+            <Text style={styles.modalLabel}>TÊN SỞ THÍCH</Text>
+            <TextInput
+              value={newInterestName}
+              onChangeText={setNewInterestName}
+              placeholder="Ví dụ: Chụp ảnh đường phố"
+              placeholderTextColor={TEXT_MUTED}
+              style={styles.modalInput}
+            />
+
+            <Text style={styles.modalLabel}>MÔ TẢ NGẮN (KHÔNG BẮT BUỘC)</Text>
+            <TextInput
+              value={newInterestNote}
+              onChangeText={setNewInterestNote}
+              placeholder="Chia sẻ thêm về đam mê của bạn..."
+              placeholderTextColor={TEXT_MUTED}
+              style={[styles.modalInput, styles.modalTextarea]}
+              multiline
+            />
+
+            <View style={styles.modalActions}>
+              <Pressable
+                style={[styles.modalButton, styles.modalCancel]}
+                onPress={closeAddModal}
+              >
+                <Text style={styles.modalCancelText}>Hủy</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalConfirm]}
+                onPress={handleAddInterest}
+              >
+                <Text style={styles.modalConfirmText}>Thêm</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -194,34 +284,36 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "700",
     color: TEXT_DARK,
-    marginBottom: 10,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     color: TEXT_MUTED,
-    lineHeight: 22,
-    marginBottom: 18,
+    lineHeight: 20,
+    marginBottom: 14,
   },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 14,
+    marginTop: 6,
   },
   card: {
     width: "48%",
+    height: 170,
     borderRadius: CARD_RADIUS,
     overflow: "hidden",
+    marginBottom: 14,
     backgroundColor: SURFACE,
     borderWidth: 1,
-    borderColor: "transparent",
-    minHeight: 140,
+    borderColor: BORDER,
   },
   cardSelected: {
-    borderColor: "#A8D3BD",
+    borderColor: ACCENT,
+    borderWidth: 2,
   },
   cardOffset: {
     marginTop: 8,
@@ -277,6 +369,39 @@ const styles = StyleSheet.create({
     color: TEXT_MUTED,
     fontWeight: "600",
   },
+  addInputRow: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: SURFACE,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  addInput: {
+    flex: 1,
+    fontSize: 14,
+    color: TEXT_DARK,
+  },
+  addAction: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: ACCENT,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addCancel: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#EEF1F0",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   quoteCard: {
     marginTop: 22,
     backgroundColor: "#F4F7F5",
@@ -309,5 +434,89 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "600",
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(17, 22, 20, 0.45)",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  modalCard: {
+    backgroundColor: SURFACE,
+    borderRadius: 22,
+    padding: 20,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 18,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: TEXT_DARK,
+  },
+  modalUnderline: {
+    width: 34,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: ACCENT,
+    marginTop: 6,
+  },
+  modalClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#F1F3F2",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalLabel: {
+    fontSize: 12,
+    color: TEXT_MUTED,
+    fontWeight: "700",
+    letterSpacing: 0.6,
+    marginBottom: 8,
+  },
+  modalInput: {
+    backgroundColor: "#F1F3F2",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    color: TEXT_DARK,
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  modalTextarea: {
+    minHeight: 92,
+    textAlignVertical: "top",
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    borderRadius: 999,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  modalCancel: {
+    backgroundColor: "#E3E4E3",
+  },
+  modalConfirm: {
+    backgroundColor: ACCENT,
+  },
+  modalCancelText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: TEXT_DARK,
+  },
+  modalConfirmText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });

@@ -23,44 +23,67 @@ const RANGE_BG = "#E5EFEA";
 type DayCell = {
   key: string;
   label?: string;
-  state?: "range" | "selected";
+  date?: Date;
 };
+
+const START_DEFAULT = new Date(2023, 9, 15);
+const END_DEFAULT = new Date(2023, 9, 18);
 
 export default function TravelDatesScreen() {
   const [isFlexible, setIsFlexible] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(START_DEFAULT);
+  const [endDate, setEndDate] = useState<Date | null>(END_DEFAULT);
   const router = useRouter();
 
-  const octoberDays = useMemo(() => {
+  const buildMonth = (year: number, monthIndex: number, keyPrefix: string) => {
     const days: DayCell[] = [];
-    const daysInMonth = 31;
-    for (let i = 0; i < 7; i += 1) {
-      days.push({ key: `oct-empty-${i}` });
-    }
-    for (let day = 1; day <= daysInMonth; day += 1) {
-      const state =
-        day >= 16 && day <= 18 ? "range" : day === 15 ? "selected" : undefined;
-      days.push({ key: `oct-${day}`, label: String(day), state });
-    }
-    return days;
-  }, []);
+    const firstDay = new Date(year, monthIndex, 1);
+    const leadingBlanks = firstDay.getDay();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
 
-  const novemberDays = useMemo(() => {
-    const days: DayCell[] = [];
-    const daysInMonth = 30;
-    for (let i = 0; i < 3; i += 1) {
-      days.push({ key: `nov-empty-${i}` });
+    for (let i = 0; i < leadingBlanks; i += 1) {
+      days.push({ key: `${keyPrefix}-empty-${i}` });
     }
     for (let day = 1; day <= daysInMonth; day += 1) {
-      days.push({ key: `nov-${day}`, label: String(day) });
+      const date = new Date(year, monthIndex, day);
+      days.push({ key: `${keyPrefix}-${day}`, label: String(day), date });
     }
     return days;
-  }, []);
+  };
+
+  const octoberDays = useMemo(() => buildMonth(2023, 9, "oct"), []);
+
+  const novemberDays = useMemo(() => buildMonth(2023, 10, "nov"), []);
+
+  const formatDate = (value: Date) => {
+    const year = value.getFullYear();
+    const month = `${value.getMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleSelectDate = (date: Date) => {
+    if (!startDate || (startDate && endDate)) {
+      setStartDate(date);
+      setEndDate(null);
+      return;
+    }
+
+    if (date < startDate) {
+      setStartDate(date);
+      return;
+    }
+
+    setEndDate(date);
+  };
 
   const handleContinue = () => {
+    const start = startDate ?? START_DEFAULT;
+    const end = endDate ?? start;
     updateOnboardingState({
       dates: {
-        start: "2023-10-15",
-        end: "2023-10-18",
+        start: formatDate(start),
+        end: formatDate(end),
         flexible: isFlexible,
       },
     });
@@ -71,7 +94,7 @@ export default function TravelDatesScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.iconButton}>
+          <Pressable style={styles.iconButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={20} color={ACCENT} />
           </Pressable>
           <Text style={styles.headerTitle}>Chọn ngày đi</Text>
@@ -95,29 +118,45 @@ export default function TravelDatesScreen() {
         </View>
         <View style={styles.calendarGrid}>
           {octoberDays.map((item) => {
-            const isRange = item.state === "range";
-            const isSelected = item.state === "selected";
-            const isRangeStart = item.label === "16";
-            const isRangeEnd = item.label === "18";
+            const isSelectable = !!item.date;
+            const isStart =
+              !!item.date &&
+              !!startDate &&
+              item.date.toDateString() === startDate.toDateString();
+            const isEnd =
+              !!item.date &&
+              !!endDate &&
+              item.date.toDateString() === endDate.toDateString();
+            const isInRange =
+              !!item.date &&
+              !!startDate &&
+              !!endDate &&
+              item.date > startDate &&
+              item.date < endDate;
             return (
-              <View key={item.key} style={styles.dayCell}>
-                {isRange ? (
+              <Pressable
+                key={item.key}
+                style={styles.dayCell}
+                disabled={!isSelectable}
+                onPress={() => item.date && handleSelectDate(item.date)}
+              >
+                {isInRange ? (
                   <View
                     style={[
                       styles.rangeHighlight,
-                      isRangeStart ? styles.rangeStart : null,
-                      isRangeEnd ? styles.rangeEnd : null,
+                      isStart ? styles.rangeStart : null,
+                      isEnd ? styles.rangeEnd : null,
                     ]}
                   />
                 ) : null}
-                {isSelected || isRangeEnd ? (
+                {isStart || isEnd ? (
                   <View style={styles.selectedCircle}>
                     <Text style={styles.selectedText}>{item.label}</Text>
                   </View>
                 ) : item.label ? (
                   <Text style={styles.dayText}>{item.label}</Text>
                 ) : null}
-              </View>
+              </Pressable>
             );
           })}
         </View>
@@ -131,13 +170,40 @@ export default function TravelDatesScreen() {
           ))}
         </View>
         <View style={styles.calendarGrid}>
-          {novemberDays.map((item) => (
-            <View key={item.key} style={styles.dayCell}>
-              {item.label ? (
-                <Text style={styles.dayText}>{item.label}</Text>
-              ) : null}
-            </View>
-          ))}
+          {novemberDays.map((item) => {
+            const isSelectable = !!item.date;
+            const isStart =
+              !!item.date &&
+              !!startDate &&
+              item.date.toDateString() === startDate.toDateString();
+            const isEnd =
+              !!item.date &&
+              !!endDate &&
+              item.date.toDateString() === endDate.toDateString();
+            const isInRange =
+              !!item.date &&
+              !!startDate &&
+              !!endDate &&
+              item.date > startDate &&
+              item.date < endDate;
+            return (
+              <Pressable
+                key={item.key}
+                style={styles.dayCell}
+                disabled={!isSelectable}
+                onPress={() => item.date && handleSelectDate(item.date)}
+              >
+                {isInRange ? <View style={styles.rangeHighlight} /> : null}
+                {isStart || isEnd ? (
+                  <View style={styles.selectedCircle}>
+                    <Text style={styles.selectedText}>{item.label}</Text>
+                  </View>
+                ) : item.label ? (
+                  <Text style={styles.dayText}>{item.label}</Text>
+                ) : null}
+              </Pressable>
+            );
+          })}
         </View>
 
         <Pressable

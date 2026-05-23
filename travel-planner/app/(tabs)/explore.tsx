@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-import { resetOnboardingState } from "@/lib/onboarding-store";
+import {
+  resetOnboardingState,
+  updateOnboardingState,
+} from "@/lib/onboarding-store";
 
 const ACCENT = "#0B7D4E";
 const TEXT_DARK = "#1F2328";
@@ -12,9 +16,28 @@ const BORDER = "#E4E8EB";
 
 export default function ExploreScreen() {
   const router = useRouter();
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(
+    null,
+  );
+
+  const destinations = [
+    { id: "hanoi", name: "Hà Nội", meta: "3 ngày · Ẩm thực" },
+    { id: "danang", name: "Đà Nẵng", meta: "4 ngày · Biển" },
+    { id: "dalat", name: "Đà Lạt", meta: "3 ngày · Nghỉ dưỡng" },
+    { id: "hochiminh", name: "TP. Hồ Chí Minh", meta: "2 ngày · Thành phố" },
+  ];
 
   const handleCreateTrip = () => {
+    if (!selectedDestination) {
+      return;
+    }
     resetOnboardingState();
+    const chosen = destinations.find((item) => item.id === selectedDestination);
+    if (chosen) {
+      updateOnboardingState({
+        destination: { id: chosen.id, name: chosen.name },
+      });
+    }
     router.push("/trip-info");
   };
   return (
@@ -31,7 +54,14 @@ export default function ExploreScreen() {
         <Text style={styles.cardSubtitle}>
           Chọn điểm đến và tuỳ chỉnh trải nghiệm phù hợp với bạn.
         </Text>
-        <Pressable style={styles.primaryButton} onPress={handleCreateTrip}>
+        <Pressable
+          style={[
+            styles.primaryButton,
+            !selectedDestination ? styles.primaryButtonDisabled : null,
+          ]}
+          onPress={handleCreateTrip}
+          disabled={!selectedDestination}
+        >
           <Text style={styles.primaryButtonText}>Tạo chuyến đi</Text>
         </Pressable>
       </View>
@@ -39,14 +69,29 @@ export default function ExploreScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Gợi ý cho bạn</Text>
         <View style={styles.suggestionRow}>
-          <View style={styles.suggestionCard}>
-            <Text style={styles.suggestionTitle}>Hà Nội</Text>
-            <Text style={styles.suggestionMeta}>3 ngày · Ẩm thực</Text>
-          </View>
-          <View style={styles.suggestionCard}>
-            <Text style={styles.suggestionTitle}>Đà Nẵng</Text>
-            <Text style={styles.suggestionMeta}>4 ngày · Biển</Text>
-          </View>
+          {destinations.map((item) => {
+            const isSelected = selectedDestination === item.id;
+            return (
+              <Pressable
+                key={item.id}
+                style={[
+                  styles.suggestionCard,
+                  isSelected ? styles.suggestionCardSelected : null,
+                ]}
+                onPress={() => setSelectedDestination(item.id)}
+              >
+                <View style={styles.suggestionHeader}>
+                  <Text style={styles.suggestionTitle}>{item.name}</Text>
+                  {isSelected ? (
+                    <View style={styles.selectedBadge}>
+                      <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.suggestionMeta}>{item.meta}</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
     </ScrollView>
@@ -105,6 +150,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
   },
+  primaryButtonDisabled: {
+    opacity: 0.6,
+  },
   primaryButtonText: {
     color: "#FFFFFF",
     fontWeight: "600",
@@ -120,16 +168,35 @@ const styles = StyleSheet.create({
   },
   suggestionRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   suggestionCard: {
-    flex: 1,
+    width: "48%",
     backgroundColor: SURFACE,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: BORDER,
     padding: 14,
     gap: 6,
+  },
+  suggestionCardSelected: {
+    borderColor: ACCENT,
+    backgroundColor: "#F1F8F4",
+  },
+  suggestionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 6,
+  },
+  selectedBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: ACCENT,
+    alignItems: "center",
+    justifyContent: "center",
   },
   suggestionTitle: {
     fontSize: 15,
