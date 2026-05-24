@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Modal,
+  Alert,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -10,9 +10,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
-import { getOnboardingState } from "@/lib/onboarding-store";
+import { ActivityDetailSheet } from "@/components/activity-detail-sheet";
+import { HintSolveSheet } from "@/components/hint-solve-sheet";
+import * as mockApi from "@/lib/mock-api";
+import type { Activity, Trip } from "@/lib/types";
 
 const ACCENT = "#0B7D4E";
 const ACCENT_SOFT = "#E7F2ED";
@@ -25,157 +28,136 @@ const BORDER = "#E4E8EB";
 const HERO_IMAGE = require("@/assets/images/2.png");
 const PLACE_IMAGE = require("@/assets/images/1.png");
 
-type Activity = {
-  id: string;
-  type: "place" | "restaurant" | "accommodation";
-  name: string;
-  startTime: string;
-  endTime?: string;
-  description: string;
-  address: string;
-  priceEstimate: number;
-  imageUrls: number[];
+const SEGMENT_ICONS: Record<string, keyof typeof import("@expo/vector-icons").Ionicons.glyphMap> = {
+  morning: "sunny",
+  afternoon: "leaf",
+  evening: "moon",
 };
 
-type Segment = {
-  timeOfDay: string;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  timeLabel: string;
-  activities: Activity[];
-};
-
-type DayPlan = {
-  date: string;
-  dayTitle: string;
-  segments: Segment[];
-};
-
-const DEFAULT_SEGMENTS: Segment[] = [
-  {
-    timeOfDay: "morning",
-    label: "SÁNG SỚM",
-    icon: "sunny",
-    timeLabel: "08:30",
-    activities: [
-      {
-        id: "activity-1",
-        type: "restaurant",
-        name: "Phở Bát Đàn & Cà Phê Trứng",
-        startTime: "08:30",
-        description:
-          "Khởi đầu ngày mới với hương vị truyền thống của phố cổ Hà Nội.",
-        address: "49 Bát Đàn, Hoàn Kiếm, Hà Nội",
-        priceEstimate: 120000,
-        imageUrls: [PLACE_IMAGE],
-      },
-    ],
-  },
-  {
-    timeOfDay: "afternoon",
-    label: "BUỔI TRƯA",
-    icon: "leaf",
-    timeLabel: "14:00",
-    activities: [
-      {
-        id: "activity-2",
-        type: "place",
-        name: "Bảo tàng Dân tộc học",
-        startTime: "14:00",
-        description:
-          "Khám phá di sản văn hóa đặc sắc của 54 dân tộc anh em.",
-        address: "Nguyễn Văn Huyên, Cầu Giấy",
-        priceEstimate: 200000,
-        imageUrls: [PLACE_IMAGE],
-      },
-    ],
-  },
-  {
-    timeOfDay: "evening",
-    label: "BUỔI TỐI",
-    icon: "moon",
-    timeLabel: "19:30",
-    activities: [
-      {
-        id: "activity-3",
-        type: "place",
-        name: "Dạo quanh Hồ Gươm",
-        startTime: "19:30",
-        description: "Thưởng thức không khí Hà Nội về đêm và các góc phố cổ.",
-        address: "Hàng Trống, Hoàn Kiếm",
-        priceEstimate: 0,
-        imageUrls: [PLACE_IMAGE, PLACE_IMAGE],
-      },
-    ],
-  },
-];
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("vi-VN").format(value);
-
-const buildDateRange = (start: string, end: string) => {
-  const result: string[] = [];
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
-    return result;
-  }
-  let current = new Date(startDate.getTime());
-  while (current <= endDate) {
-    result.push(current.toISOString().slice(0, 10));
-    current = new Date(current.getTime() + 24 * 60 * 60 * 1000);
-  }
-  return result;
-};
+const formatCurrency = (value: number) => new Intl.NumberFormat("vi-VN").format(value);
 
 const formatShortDate = (value: string) => {
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  const day = `${date.getDate()}`.padStart(2, "0");
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  return `${day} Thg ${month}`;
+  if (Number.isNaN(date.getTime())) return value;
+  const d = `${date.getDate()}`.padStart(2, "0");
+  const m = `${date.getMonth() + 1}`.padStart(2, "0");
+  return `${d} Thg ${m}`;
 };
 
 export default function PlanScreen() {
   const router = useRouter();
-  const onboarding = getOnboardingState();
+  const params = useLocalSearchParams<{ tripId?: string }>();
+
+  const [trip, setTrip] = useState<Trip | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
-  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
-    null,
-  );
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const [selectedLocator, setSelectedLocator] = useState<
+    { dayIndex: number; segmentIndex: number; activityIndex: number } | null
+  >(null);
+  const [hintOpen, setHintOpen] = useState(false);
 
-  const dateRange = useMemo(
-    () => buildDateRange(onboarding.dates.start, onboarding.dates.end),
-    [onboarding.dates.end, onboarding.dates.start],
-  );
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      let target: Trip | null = null;
+      if (params.tripId) {
+        target = await mockApi.getTripById(params.tripId);
+      }
+      if (!target) {
+        const list = await mockApi.getMyTrips();
+        target = list[0] ?? (await mockApi.createTrip());
+      }
+      if (alive) {
+        setTrip(target);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [params.tripId]);
 
-  const dayPlans = useMemo<DayPlan[]>(() => {
-    if (dateRange.length === 0) {
-      return [];
-    }
-    return dateRange.map((date, index) => ({
-      date,
-      dayTitle: `Ngày ${index + 1}`,
-      segments: DEFAULT_SEGMENTS,
-    }));
-  }, [dateRange]);
-
+  const dayPlans = trip?.planByDay ?? [];
   const activePlan = dayPlans[selectedDayIndex];
 
-  const totalBudget = onboarding.budget || 12500000;
-  const spentBudget = Math.round(totalBudget * 0.66);
+  const totalBudget = trip?.budget ?? 0;
+  const spentBudget = useMemo(() => Math.round(totalBudget * 0.66), [totalBudget]);
   const remainingBudget = Math.max(0, totalBudget - spentBudget);
   const progressRatio = totalBudget ? spentBudget / totalBudget : 0;
 
-  const destinationName = onboarding.destination?.name ?? "Hà Nội Hoài Cổ";
+  const destinationName = trip?.destinationName ?? "Chuyến đi";
   const dateLabel =
-    dateRange.length > 0
-      ? `${formatShortDate(dateRange[0])} - ${formatShortDate(
-          dateRange[dateRange.length - 1],
-        )}`
-      : "15 Thg 10 - 18 Thg 10";
+    dayPlans.length > 0
+      ? `${formatShortDate(dayPlans[0].date)} - ${formatShortDate(dayPlans[dayPlans.length - 1].date)}`
+      : "";
+
+  const openActivity = (
+    activity: Activity,
+    dayIndex: number,
+    segmentIndex: number,
+    activityIndex: number,
+  ) => {
+    setSelectedActivity(activity);
+    setSelectedLocator({ dayIndex, segmentIndex, activityIndex });
+  };
+
+  const closeActivity = () => {
+    setSelectedActivity(null);
+    setSelectedLocator(null);
+  };
+
+  const handleSaveTrip = async () => {
+    if (!trip) return;
+    await mockApi.saveTrip(trip.tripId);
+    Alert.alert("Đã lưu", "Chuyến đi của bạn đã được lưu vào hồ sơ.");
+    setTrip({ ...trip, status: "saved" });
+  };
+
+  const handlePickReplacement = async (replacement: Activity) => {
+    if (!trip || !selectedLocator) return;
+    const { dayIndex, segmentIndex, activityIndex } = selectedLocator;
+    const original = trip.planByDay[dayIndex].segments[segmentIndex].activities[activityIndex];
+    const merged: Activity = {
+      ...replacement,
+      startTime: original.startTime,
+      endTime: original.endTime,
+    };
+    await mockApi.updateActivity(trip.tripId, dayIndex, segmentIndex, activityIndex, merged);
+    const next: Trip = {
+      ...trip,
+      planByDay: trip.planByDay.map((d, di) =>
+        di !== dayIndex
+          ? d
+          : {
+              ...d,
+              segments: d.segments.map((s, si) =>
+                si !== segmentIndex
+                  ? s
+                  : {
+                      ...s,
+                      activities: s.activities.map((a, ai) => (ai === activityIndex ? merged : a)),
+                    },
+              ),
+            },
+      ),
+    };
+    setTrip(next);
+    setHintOpen(false);
+    closeActivity();
+    Alert.alert("Đã cập nhật", "Hoạt động đã được thay thế bằng gợi ý mới.");
+  };
+
+  if (loading || !trip) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingWrap}>
+          <Text style={styles.loadingText}>Đang tải hành trình...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -185,7 +167,16 @@ export default function PlanScreen() {
             <Ionicons name="arrow-back" size={20} color={TEXT_DARK} />
           </Pressable>
           <Text style={styles.brandText}>The Curator</Text>
-          <View style={styles.avatar} />
+          <Pressable style={styles.saveBtn} onPress={handleSaveTrip}>
+            <Ionicons
+              name={trip.status === "saved" ? "bookmark" : "bookmark-outline"}
+              size={16}
+              color={trip.status === "saved" ? ACCENT : TEXT_DARK}
+            />
+            <Text style={[styles.saveBtnText, trip.status === "saved" ? { color: ACCENT } : null]}>
+              {trip.status === "saved" ? "Đã lưu" : "Lưu"}
+            </Text>
+          </Pressable>
         </View>
 
         <View style={styles.heroCard}>
@@ -203,14 +194,12 @@ export default function PlanScreen() {
 
         <Pressable
           style={styles.budgetCard}
-          onPress={() => router.push("/plan-budget")}
+          onPress={() => router.push({ pathname: "/plan-budget", params: { tripId: trip.tripId } })}
         >
           <View style={styles.budgetHeader}>
             <View>
               <Text style={styles.budgetLabel}>TỔNG NGÂN SÁCH</Text>
-              <Text style={styles.budgetValue}>
-                {formatCurrency(totalBudget)}đ
-              </Text>
+              <Text style={styles.budgetValue}>{formatCurrency(totalBudget)}đ</Text>
             </View>
             <View style={styles.budgetBadge}>
               <Text style={styles.budgetBadgeText}>Hợp lý</Text>
@@ -218,30 +207,18 @@ export default function PlanScreen() {
           </View>
           <View style={styles.budgetRow}>
             <Text style={styles.budgetRowLabel}>Đã chi tiêu</Text>
-            <Text style={styles.budgetRowValue}>
-              {formatCurrency(spentBudget)}đ
-            </Text>
+            <Text style={styles.budgetRowValue}>{formatCurrency(spentBudget)}đ</Text>
           </View>
           <View style={styles.budgetTrack}>
-            <View
-              style={[styles.budgetFill, { width: `${progressRatio * 100}%` }]}
-            />
+            <View style={[styles.budgetFill, { width: `${progressRatio * 100}%` }]} />
           </View>
           <View style={styles.budgetFoot}>
-            <Text style={styles.budgetFootText}>
-              {Math.round(progressRatio * 100)}% HOÀN THÀNH
-            </Text>
-            <Text style={styles.budgetFootText}>
-              CÒN LẠI: {formatCurrency(remainingBudget)}đ
-            </Text>
+            <Text style={styles.budgetFootText}>{Math.round(progressRatio * 100)}% HOÀN THÀNH</Text>
+            <Text style={styles.budgetFootText}>CÒN LẠI: {formatCurrency(remainingBudget)}đ</Text>
           </View>
         </Pressable>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.dayTabs}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dayTabs}>
           {dayPlans.map((day, index) => {
             const isActive = index === selectedDayIndex;
             return (
@@ -250,60 +227,95 @@ export default function PlanScreen() {
                 style={[styles.dayPill, isActive ? styles.dayPillActive : null]}
                 onPress={() => setSelectedDayIndex(index)}
               >
-                <Text
-                  style={[
-                    styles.dayPillText,
-                    isActive ? styles.dayPillTextActive : null,
-                  ]}
-                >
+                <Text style={[styles.dayPillText, isActive ? styles.dayPillTextActive : null]}>
                   {day.dayTitle}
+                </Text>
+                <Text style={[styles.dayPillSub, isActive ? styles.dayPillTextActive : null]}>
+                  {formatShortDate(day.date)}
                 </Text>
               </Pressable>
             );
           })}
         </ScrollView>
 
-        {activePlan?.segments.map((segment) => (
-          <View key={segment.timeOfDay} style={styles.segmentBlock}>
+        {activePlan?.dailyTips ? (
+          <View style={styles.tipsCard}>
+            <Ionicons name="bulb" size={14} color={ACCENT} />
+            <Text style={styles.tipsText}>{activePlan.dailyTips}</Text>
+          </View>
+        ) : null}
+
+        {activePlan?.segments.map((segment, segmentIndex) => (
+          <View key={`${selectedDayIndex}-${segment.timeOfDay}`} style={styles.segmentBlock}>
             <View style={styles.segmentHeader}>
               <View style={styles.segmentIcon}>
-                <Ionicons name={segment.icon} size={14} color={ACCENT} />
+                <Ionicons name={SEGMENT_ICONS[segment.timeOfDay] ?? "sunny"} size={14} color={ACCENT} />
               </View>
               <Text style={styles.segmentLabel}>
                 {segment.label} · {segment.timeLabel}
               </Text>
             </View>
 
-            {segment.activities.map((activity) => (
+            {segment.activities.map((activity, activityIndex) => (
               <Pressable
-                key={activity.id}
+                key={activity.activityId ?? `${activity.id}-${activityIndex}`}
                 style={styles.activityCard}
-                onPress={() => setSelectedActivity(activity)}
+                onPress={() => openActivity(activity, selectedDayIndex, segmentIndex, activityIndex)}
               >
-                <View style={styles.activityBody}>
-                  <Text style={styles.activityTitle}>{activity.name}</Text>
-                  <View style={styles.activityMetaRow}>
+                <View style={styles.activityHeader}>
+                  <View style={styles.typeBadge}>
                     <Ionicons
-                      name="location"
-                      size={12}
-                      color={TEXT_MUTED}
+                      name={
+                        activity.type === "restaurant"
+                          ? "restaurant"
+                          : activity.type === "accommodation"
+                          ? "bed"
+                          : "compass"
+                      }
+                      size={11}
+                      color={ACCENT}
                     />
-                    <Text style={styles.activityMeta}>{activity.address}</Text>
+                    <Text style={styles.typeBadgeText}>
+                      {activity.type === "restaurant"
+                        ? "Ẩm thực"
+                        : activity.type === "accommodation"
+                        ? "Lưu trú"
+                        : "Tham quan"}
+                    </Text>
                   </View>
+                  {activity.rating ? (
+                    <View style={styles.miniRating}>
+                      <Ionicons name="star" size={11} color="#F5A524" />
+                      <Text style={styles.miniRatingText}>{activity.rating.toFixed(1)}</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.activityTitle}>{activity.name}</Text>
+                <Text style={styles.activityDesc} numberOfLines={2}>
+                  {activity.description}
+                </Text>
+                <View style={styles.activityMetaRow}>
+                  <Ionicons name="location" size={12} color={TEXT_MUTED} />
+                  <Text style={styles.activityMeta} numberOfLines={1}>
+                    {activity.address}
+                  </Text>
+                </View>
+                <View style={styles.activityFoot}>
+                  <View style={styles.activityFootLeft}>
+                    <Ionicons name="time" size={12} color={TEXT_MUTED} />
+                    <Text style={styles.activityFootText}>
+                      {activity.startTime}
+                      {activity.endTime ? ` - ${activity.endTime}` : ""}
+                    </Text>
+                  </View>
+                  <Text style={styles.activityPrice}>
+                    {activity.priceEstimate > 0
+                      ? `${formatCurrency(activity.priceEstimate)}đ`
+                      : "Miễn phí"}
+                  </Text>
                 </View>
                 <View style={styles.activityMediaRow}>
-                  {activity.imageUrls.map((image, index) => (
-                    <Image
-                      key={`${activity.id}-${index}`}
-                      source={image}
-                      style={
-                        index === 0
-                          ? styles.activityHero
-                          : styles.activityThumb
-                      }
-                      contentFit="cover"
-                    />
-                  ))}
+                  <Image source={PLACE_IMAGE} style={styles.activityHero} contentFit="cover" />
                 </View>
               </Pressable>
             ))}
@@ -311,386 +323,104 @@ export default function PlanScreen() {
         ))}
       </ScrollView>
 
-      <Modal
-        transparent
-        animationType="fade"
+      <ActivityDetailSheet
         visible={!!selectedActivity}
-        onRequestClose={() => setSelectedActivity(null)}
-      >
-        <View style={styles.detailBackdrop}>
-          <View style={styles.detailCard}>
-            <View style={styles.detailHeader}>
-              <Text style={styles.detailTitle}>Chi tiết hoạt động</Text>
-              <Pressable
-                style={styles.detailClose}
-                onPress={() => setSelectedActivity(null)}
-              >
-                <Ionicons name="close" size={16} color={TEXT_DARK} />
-              </Pressable>
-            </View>
-            {selectedActivity ? (
-              <>
-                <Image
-                  source={selectedActivity.imageUrls[0] ?? PLACE_IMAGE}
-                  style={styles.detailImage}
-                  contentFit="cover"
-                />
-                <Text style={styles.detailName}>{selectedActivity.name}</Text>
-                <Text style={styles.detailTime}>
-                  {selectedActivity.startTime}
-                  {selectedActivity.endTime
-                    ? ` - ${selectedActivity.endTime}`
-                    : ""}
-                </Text>
-                <View style={styles.detailRow}>
-                  <Ionicons name="location" size={14} color={TEXT_MUTED} />
-                  <Text style={styles.detailText}>
-                    {selectedActivity.address}
-                  </Text>
-                </View>
-                <Text style={styles.detailDescription}>
-                  {selectedActivity.description}
-                </Text>
-                <View style={styles.detailPriceRow}>
-                  <Text style={styles.detailPriceLabel}>Chi phí dự kiến</Text>
-                  <Text style={styles.detailPriceValue}>
-                    {formatCurrency(selectedActivity.priceEstimate)}đ
-                  </Text>
-                </View>
-                <Pressable
-                  style={styles.detailCta}
-                  onPress={() => setSelectedActivity(null)}
-                >
-                  <Text style={styles.detailCtaText}>Hoàn tất</Text>
-                </Pressable>
-              </>
-            ) : null}
-          </View>
-        </View>
-      </Modal>
+        activity={selectedActivity}
+        onClose={closeActivity}
+        onRequestHintSolve={() => setHintOpen(true)}
+      />
+
+      <HintSolveSheet
+        visible={hintOpen}
+        activity={selectedActivity}
+        preference={trip.preference}
+        onClose={() => setHintOpen(false)}
+        onPick={handlePickReplacement}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: BACKGROUND,
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 80,
-    gap: 18,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
+  safeArea: { flex: 1, backgroundColor: BACKGROUND },
+  loadingWrap: { flex: 1, alignItems: "center", justifyContent: "center" },
+  loadingText: { color: TEXT_MUTED, fontSize: 14 },
+  content: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 80, gap: 16 },
+  headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   iconButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 38, height: 38, borderRadius: 19, backgroundColor: "#EEF1F0",
+    alignItems: "center", justifyContent: "center",
+  },
+  brandText: { fontSize: 16, fontWeight: "700", color: TEXT_DARK },
+  saveBtn: {
+    flexDirection: "row", alignItems: "center", gap: 6,
+    paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999,
     backgroundColor: "#EEF1F0",
-    alignItems: "center",
-    justifyContent: "center",
   },
-  brandText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: TEXT_DARK,
+  saveBtnText: { fontSize: 13, fontWeight: "700", color: TEXT_DARK },
+  heroCard: { borderRadius: 18, overflow: "hidden", minHeight: 170 },
+  heroImage: { width: "100%", height: "100%", position: "absolute" },
+  heroOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.35)" },
+  heroContent: { padding: 16, marginTop: 8, gap: 6 },
+  heroLabel: { color: "#FFFFFF", fontSize: 11, letterSpacing: 1.1, fontWeight: "700" },
+  heroTitle: { color: "#FFFFFF", fontSize: 22, fontWeight: "700" },
+  heroMeta: { flexDirection: "row", alignItems: "center", gap: 6 },
+  heroMetaText: { color: "#FFFFFF", fontSize: 12, fontWeight: "600" },
+  budgetCard: { backgroundColor: SURFACE, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: BORDER, gap: 12 },
+  budgetHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  budgetLabel: { color: TEXT_MUTED, fontSize: 11, fontWeight: "700", letterSpacing: 1.1 },
+  budgetValue: { fontSize: 22, fontWeight: "700", color: TEXT_DARK, marginTop: 6 },
+  budgetBadge: { backgroundColor: ACCENT_SOFT, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999 },
+  budgetBadgeText: { color: ACCENT, fontWeight: "700", fontSize: 12 },
+  budgetRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  budgetRowLabel: { color: TEXT_MUTED, fontSize: 12 },
+  budgetRowValue: { color: TEXT_DARK, fontSize: 14, fontWeight: "700" },
+  budgetTrack: { height: 8, backgroundColor: "#EEF1F0", borderRadius: 999, overflow: "hidden" },
+  budgetFill: { height: "100%", backgroundColor: ACCENT, borderRadius: 999 },
+  budgetFoot: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  budgetFootText: { fontSize: 11, color: TEXT_MUTED, fontWeight: "600" },
+  dayTabs: { gap: 10, paddingVertical: 4 },
+  dayPill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 14, backgroundColor: "#E9ECEB", minWidth: 90, alignItems: "center" },
+  dayPillActive: { backgroundColor: ACCENT },
+  dayPillText: { fontSize: 13, fontWeight: "700", color: TEXT_MUTED },
+  dayPillSub: { fontSize: 10, fontWeight: "600", color: TEXT_MUTED, marginTop: 2 },
+  dayPillTextActive: { color: "#FFFFFF" },
+  tipsCard: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    backgroundColor: ACCENT_SOFT, padding: 10, borderRadius: 12,
   },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#102433",
-  },
-  heroCard: {
-    borderRadius: 18,
-    overflow: "hidden",
-    minHeight: 170,
-  },
-  heroImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-  },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.35)",
-  },
-  heroContent: {
-    padding: 16,
-    marginTop: 8,
-    gap: 6,
-  },
-  heroLabel: {
-    color: "#FFFFFF",
-    fontSize: 11,
-    letterSpacing: 1.1,
-    fontWeight: "700",
-  },
-  heroTitle: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "700",
-  },
-  heroMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  heroMetaText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  budgetCard: {
-    backgroundColor: SURFACE,
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: BORDER,
-    gap: 12,
-  },
-  budgetHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  budgetLabel: {
-    color: TEXT_MUTED,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1.1,
-  },
-  budgetValue: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: TEXT_DARK,
-    marginTop: 6,
-  },
-  budgetBadge: {
-    backgroundColor: ACCENT_SOFT,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-  },
-  budgetBadgeText: {
-    color: ACCENT,
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  budgetRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  budgetRowLabel: {
-    color: TEXT_MUTED,
-    fontSize: 12,
-  },
-  budgetRowValue: {
-    color: TEXT_DARK,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  budgetTrack: {
-    height: 8,
-    backgroundColor: "#EEF1F0",
-    borderRadius: 999,
-    overflow: "hidden",
-  },
-  budgetFill: {
-    height: "100%",
-    backgroundColor: ACCENT,
-    borderRadius: 999,
-  },
-  budgetFoot: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  budgetFootText: {
-    fontSize: 11,
-    color: TEXT_MUTED,
-    fontWeight: "600",
-  },
-  dayTabs: {
-    gap: 10,
-    paddingVertical: 4,
-  },
-  dayPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: "#E9ECEB",
-  },
-  dayPillActive: {
-    backgroundColor: ACCENT,
-  },
-  dayPillText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: TEXT_MUTED,
-  },
-  dayPillTextActive: {
-    color: "#FFFFFF",
-  },
-  segmentBlock: {
-    gap: 10,
-  },
-  segmentHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
+  tipsText: { flex: 1, fontSize: 12, color: TEXT_DARK },
+  segmentBlock: { gap: 10 },
+  segmentHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
   segmentIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: ACCENT_SOFT,
-    alignItems: "center",
-    justifyContent: "center",
+    width: 28, height: 28, borderRadius: 14, backgroundColor: ACCENT_SOFT,
+    alignItems: "center", justifyContent: "center",
   },
-  segmentLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: TEXT_MUTED,
-    letterSpacing: 1,
-  },
+  segmentLabel: { fontSize: 12, fontWeight: "700", color: TEXT_MUTED, letterSpacing: 1 },
   activityCard: {
-    backgroundColor: SURFACE,
-    borderRadius: 18,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: BORDER,
-    gap: 12,
+    backgroundColor: SURFACE, borderRadius: 18, padding: 14,
+    borderWidth: 1, borderColor: BORDER, gap: 8,
   },
-  activityBody: {
-    gap: 6,
+  activityHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  typeBadge: {
+    flexDirection: "row", alignItems: "center", gap: 4,
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999,
+    backgroundColor: ACCENT_SOFT,
   },
-  activityTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: TEXT_DARK,
+  typeBadgeText: { fontSize: 10, fontWeight: "700", color: ACCENT, letterSpacing: 0.6 },
+  miniRating: { flexDirection: "row", alignItems: "center", gap: 3 },
+  miniRatingText: { fontSize: 11, fontWeight: "700", color: TEXT_DARK },
+  activityTitle: { fontSize: 16, fontWeight: "700", color: TEXT_DARK },
+  activityDesc: { fontSize: 12, color: TEXT_MUTED, lineHeight: 17 },
+  activityMetaRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  activityMeta: { fontSize: 11, color: TEXT_MUTED, flex: 1 },
+  activityFoot: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingTop: 8, borderTopWidth: 1, borderTopColor: BORDER,
   },
-  activityMetaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  activityMeta: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-  activityMediaRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  activityHero: {
-    flex: 1,
-    height: 140,
-    borderRadius: 16,
-  },
-  activityThumb: {
-    width: 88,
-    height: 88,
-    borderRadius: 12,
-  },
-  detailBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(14, 20, 18, 0.45)",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  detailCard: {
-    backgroundColor: SURFACE,
-    borderRadius: 20,
-    padding: 18,
-  },
-  detailHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  detailTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: TEXT_DARK,
-  },
-  detailClose: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#EEF1F0",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  detailImage: {
-    width: "100%",
-    height: 160,
-    borderRadius: 16,
-    marginBottom: 12,
-  },
-  detailName: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: TEXT_DARK,
-  },
-  detailTime: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-    marginTop: 4,
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginTop: 8,
-  },
-  detailText: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-    flex: 1,
-  },
-  detailDescription: {
-    fontSize: 13,
-    color: TEXT_DARK,
-    lineHeight: 18,
-    marginTop: 10,
-  },
-  detailPriceRow: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: BORDER,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  detailPriceLabel: {
-    fontSize: 12,
-    color: TEXT_MUTED,
-  },
-  detailPriceValue: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: TEXT_DARK,
-  },
-  detailCta: {
-    marginTop: 16,
-    backgroundColor: ACCENT,
-    paddingVertical: 12,
-    borderRadius: 999,
-    alignItems: "center",
-  },
-  detailCtaText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  activityFootLeft: { flexDirection: "row", alignItems: "center", gap: 4 },
+  activityFootText: { fontSize: 11, color: TEXT_MUTED, fontWeight: "600" },
+  activityPrice: { fontSize: 13, fontWeight: "700", color: ACCENT },
+  activityMediaRow: { flexDirection: "row", gap: 10 },
+  activityHero: { flex: 1, height: 120, borderRadius: 14 },
 });

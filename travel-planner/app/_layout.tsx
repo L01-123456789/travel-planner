@@ -35,6 +35,7 @@ function RootLayout() {
         <Stack.Screen name="trip-info" options={{ headerShown: false }} />
         <Stack.Screen name="travel-dates" options={{ headerShown: false }} />
         <Stack.Screen name="plan-creating" options={{ headerShown: false }} />
+        <Stack.Screen name="plan-budget" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}

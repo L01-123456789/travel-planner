@@ -12,7 +12,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 
-import { apiRequestJson } from "@/lib/api";
+import * as mockApi from "@/lib/mock-api";
+import * as authStore from "@/lib/auth-store";
 
 const ACCENT = "#0B7D4E";
 const TEXT_DARK = "#1F2328";
@@ -38,6 +39,8 @@ export default function SignInScreen() {
 
   const handleSignIn = async () => {
     if (AUTO_BYPASS_AUTH) {
+      const res = await mockApi.login(email || "curator@editorial.com", password || "password");
+      authStore.setSession(res.user, res.accessToken);
       router.replace("/(tabs)");
       return;
     }
@@ -49,10 +52,8 @@ export default function SignInScreen() {
 
     try {
       setIsSubmitting(true);
-      await apiRequestJson(baseUrl, "/auth/login", {
-        method: "POST",
-        json: { username: email, password },
-      });
+      const res = await mockApi.login(email, password);
+      authStore.setSession(res.user, res.accessToken);
       router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Sign in failed", String(error));

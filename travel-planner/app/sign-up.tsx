@@ -12,7 +12,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 
-import { apiRequestJson } from "@/lib/api";
+import * as mockApi from "@/lib/mock-api";
+import * as authStore from "@/lib/auth-store";
 
 const ACCENT = "#0B7D4E";
 const TEXT_DARK = "#1F2328";
@@ -55,6 +56,14 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     if (AUTO_BYPASS_AUTH) {
+      const { firstName, lastName } = splitName(fullName || "Du khách");
+      const res = await mockApi.register({
+        email: email || "guest@example.com",
+        password: password || "password",
+        firstName,
+        lastName,
+      });
+      authStore.setSession(res.user, res.accessToken);
       router.replace("/(tabs)");
       return;
     }
@@ -69,20 +78,11 @@ export default function SignUpScreen() {
     }
 
     const { firstName, lastName } = splitName(fullName);
-    const username = email.trim();
 
     try {
       setIsSubmitting(true);
-      await apiRequestJson(baseUrl, "/auth/register", {
-        method: "POST",
-        json: {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          username,
-          password,
-        },
-      });
+      const res = await mockApi.register({ email, password, firstName, lastName });
+      authStore.setSession(res.user, res.accessToken);
       router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Sign up failed", String(error));

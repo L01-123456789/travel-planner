@@ -29,7 +29,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Trang chu",
+          title: "Trang chủ",
           tabBarIcon: ({ color }) => (
             <Ionicons size={22} name="home" color={color} />
           ),
@@ -38,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Chuyen di",
+          title: "Chuyến đi",
           tabBarIcon: ({ color }) => (
             <Ionicons size={22} name="compass" color={color} />
           ),
@@ -47,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="plan"
         options={{
-          title: "Lich trinh",
+          title: "Lịch trình",
           tabBarIcon: ({ color }) => (
             <Ionicons size={22} name="calendar" color={color} />
           ),
@@ -56,7 +56,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Ho so",
+          title: "Hồ sơ",
           tabBarIcon: ({ color }) => (
             <Ionicons size={22} name="person" color={color} />
           ),

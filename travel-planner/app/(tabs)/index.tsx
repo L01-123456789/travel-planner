@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import { Image } from "expo-image";
 import {
   Pressable,
@@ -8,13 +9,34 @@ import {
 } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import * as mockApi from "@/lib/mock-api";
+import { resetOnboardingState } from "@/lib/onboarding-store";
+import type { Trip } from "@/lib/types";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [recentTrips, setRecentTrips] = useState<Trip[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      mockApi.getMyTrips().then((list) => {
+        if (alive) setRecentTrips(list.slice(0, 5));
+      });
+      return () => {
+        alive = false;
+      };
+    }, []),
+  );
+
+  const startNewTrip = () => {
+    resetOnboardingState();
+    router.push("/(tabs)/explore");
+  };
   const textColor = "#0E1114";
   const mutedTextColor = "#7B858F";
   const cardColor = "#FFFFFF";
@@ -25,25 +47,25 @@ export default function HomeScreen() {
   const destinations = [
     {
       id: "hn",
-      name: "Ha Noi",
-      region: "Mien Bac",
+      name: "Hà Nội",
+      region: "Miền Bắc",
       rating: "4.8",
       image: require("@/assets/images/2.png"),
     },
     {
       id: "dn",
-      name: "Da Nang",
-      region: "Mien Trung",
+      name: "Đà Nẵng",
+      region: "Miền Trung",
       rating: "4.7",
       image: require("@/assets/images/2.png"),
     },
   ];
 
   const categories = [
-    { id: "food", label: "Am thuc", icon: "restaurant" },
-    { id: "explore", label: "Kham pha", icon: "trail-sign" },
-    { id: "stay", label: "Luu tru", icon: "bed" },
-    { id: "art", label: "Nghe thuat", icon: "camera" },
+    { id: "food", label: "Ẩm thực", icon: "restaurant" },
+    { id: "explore", label: "Khám phá", icon: "trail-sign" },
+    { id: "stay", label: "Lưu trú", icon: "bed" },
+    { id: "art", label: "Nghệ thuật", icon: "camera" },
   ];
 
   return (
@@ -52,7 +74,7 @@ export default function HomeScreen() {
         <View style={[styles.searchBox, { borderColor }]}>
           <IconSymbol size={18} name="magnifyingglass" color={mutedTextColor} />
           <TextInput
-            placeholder="Ban muon di dau?"
+            placeholder="Bạn muốn đi đâu?"
             placeholderTextColor={mutedTextColor}
             style={[styles.searchInput, { color: textColor }]}
           />
@@ -71,35 +93,64 @@ export default function HomeScreen() {
         <View style={styles.heroOverlay} />
         <View style={styles.heroContent}>
           <ThemedText style={[styles.heroTitle, { color: "#FFFFFF" }]}>
-            Tu chinh lich trinh thong minh
+            Tự chỉnh lịch trình thông minh
           </ThemedText>
           <ThemedText style={[styles.heroSubtitle, { color: "#DCE3E6" }]}>
-            Len ke hoach hoan hao chi trong vai phut voi AI.
+            Lên kế hoạch hoàn hảo chỉ trong vài phút với AI.
           </ThemedText>
           <Pressable
             style={[styles.ctaButton, { backgroundColor: accent }]}
             onPress={() => {
               Sentry.captureMessage("Hero CTA clicked");
-              router.push("/(tabs)/explore");
+              startNewTrip();
             }}
           >
-            <ThemedText style={styles.ctaText}>Kham pha ngay</ThemedText>
+            <ThemedText style={styles.ctaText}>Khám phá ngay</ThemedText>
           </Pressable>
         </View>
       </View>
 
+      {recentTrips.length > 0 ? (
+        <>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+              Chuyến đi gần đây
+            </ThemedText>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.cardRow}>
+            {recentTrips.map((trip) => (
+              <Pressable
+                key={trip.tripId}
+                style={[styles.recentTripCard, { backgroundColor: cardColor, borderColor }]}
+                onPress={() =>
+                  router.push({ pathname: "/(tabs)/plan", params: { tripId: trip.tripId } })
+                }
+              >
+                <View style={[styles.tripStatusDot, { backgroundColor: trip.status === "saved" ? accent : "#D0D5D9" }]} />
+                <ThemedText style={[styles.recentTripName, { color: textColor }]} numberOfLines={1}>
+                  {trip.tripName}
+                </ThemedText>
+                <ThemedText style={[styles.recentTripMeta, { color: mutedTextColor }]}>
+                  {trip.planByDay.length} ngày · {trip.status === "saved" ? "Đã lưu" : "Bản nháp"}
+                </ThemedText>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </>
+      ) : null}
+
       <View style={styles.sectionHeader}>
         <View>
           <ThemedText style={[styles.sectionLabel, { color: accent }]}>
-            GOI Y CHO BAN
+            GỢI Ý CHO BẠN
           </ThemedText>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-            Kham pha dia diem pho bien
+            Khám phá địa điểm phổ biến
           </ThemedText>
         </View>
         <Pressable onPress={() => router.push("/(tabs)/explore")}>
           <ThemedText style={[styles.linkText, { color: accent }]}>
-            Xem tat ca
+            Xem tất cả
           </ThemedText>
         </Pressable>
       </View>
@@ -143,7 +194,7 @@ export default function HomeScreen() {
                   {item.region}
                 </ThemedText>
                 <ThemedText style={[styles.linkText, { color: accent }]}>
-                  Tim hieu
+                  Tìm hiểu
                 </ThemedText>
               </View>
             </View>
@@ -153,7 +204,7 @@ export default function HomeScreen() {
 
       <View style={styles.sectionHeader}>
         <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-          Trai nghiem dac sac
+          Trải nghiệm đặc sắc
         </ThemedText>
       </View>
 
@@ -346,5 +397,25 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontSize: 13,
     fontWeight: "600",
+  },
+  recentTripCard: {
+    width: 200,
+    padding: 14,
+    borderRadius: 14,
+    marginRight: 12,
+    borderWidth: 1,
+    gap: 6,
+  },
+  tripStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  recentTripName: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  recentTripMeta: {
+    fontSize: 11,
   },
 });

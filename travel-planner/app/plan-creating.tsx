@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Pressable,
   SafeAreaView,
@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+
+import * as mockApi from "@/lib/mock-api";
 
 const ACCENT = "#0B7D4E";
 const TEXT_DARK = "#1F2328";
@@ -23,10 +25,15 @@ const TOTAL_DURATION_MS = 4200;
 export default function PlanCreatingScreen() {
   const [progress, setProgress] = useState(12);
   const router = useRouter();
+  const tripIdRef = useRef<string | null>(null);
 
   const arcRotation = useMemo(() => `${progress * 3.6 - 90}deg`, [progress]);
 
   useEffect(() => {
+    let cancelled = false;
+    mockApi.createTrip().then((trip) => {
+      if (!cancelled) tripIdRef.current = trip.tripId;
+    });
     const start = Date.now();
     const timer = setInterval(() => {
       const elapsed = Date.now() - start;
@@ -36,12 +43,20 @@ export default function PlanCreatingScreen() {
       if (ratio >= 1) {
         clearInterval(timer);
         setTimeout(() => {
-          router.replace("/(tabs)/plan");
+          const id = tripIdRef.current;
+          router.replace(
+            id
+              ? { pathname: "/(tabs)/plan", params: { tripId: id } }
+              : "/(tabs)/plan",
+          );
         }, 600);
       }
     }, 120);
 
-    return () => clearInterval(timer);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, [router]);
 
   return (
