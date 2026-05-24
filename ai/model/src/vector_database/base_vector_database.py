@@ -1,5 +1,5 @@
-import torch 
-from openai import OpenAI
+import torch
+import google.generativeai as genai
 import pandas as pd
 from dotenv import load_dotenv
 import os
@@ -21,14 +21,14 @@ load_dotenv(ENV_PATH)
 
 
 # Get API keys after loading .env
-OPEN_API_KEY = os.getenv("OPEN_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
-if not OPEN_API_KEY or not PINECONE_API_KEY:
-    raise ValueError(f"Please set OPEN_API_KEY and PINECONE_API_KEY in your .env file at {ENV_PATH}")
+if not GEMINI_API_KEY or not PINECONE_API_KEY:
+    raise ValueError(f"Please set GEMINI_API_KEY and PINECONE_API_KEY in your .env file at {ENV_PATH}")
 
 print(f"Loading environment variables from: {ENV_PATH}")
-print(f"OPEN_API_KEY exists: {bool(OPEN_API_KEY)}")
+print(f"GEMINI_API_KEY exists: {bool(GEMINI_API_KEY)}")
 print(f"PINECONE_API_KEY exists: {bool(PINECONE_API_KEY)}")
 def remove_duplicate_by_name(matches):
     """
@@ -52,13 +52,12 @@ def remove_duplicate_by_name(matches):
     return unique_matches
 class BaseVectorDatabase:
     def __init__(self, index_name="default-index"):
+        genai.configure(api_key=GEMINI_API_KEY)
         self.index = None
-        self.dimension = 1536
+        self.dimension = 3072
         self.metric = "cosine"
         self.index_name = index_name
-        self.open_api_key = OPEN_API_KEY
-        self.name_model = "text-embedding-3-small"
-        self.client = OpenAI(api_key=self.open_api_key)
+        self.embedding_model = "models/gemini-embedding-001"
         self.pinecone_api_key = PINECONE_API_KEY
         self.pc = Pinecone(api_key=self.pinecone_api_key)
         self.checkpoint_file = os.path.join(SCRIPT_DIR, f'{index_name}_checkpoint.json')
@@ -75,17 +74,15 @@ class BaseVectorDatabase:
         return text[:self.max_tokens]
 
     def get_openai_embeddings(self, text: str) -> List[float]:
-        """
-        Get embeddings from OpenAI API with error handling
-        """
+        """Get embeddings from Gemini with error handling."""
         try:
             text = self.truncate_text(text)
-            
-            response = self.client.embeddings.create(
-                input=text,
-                model=self.name_model
-            )   
-            return response.data[0].embedding
+            response = genai.embed_content(
+                model=self.embedding_model,
+                content=text,
+                task_type="retrieval_document"
+            )
+            return response["embedding"]
         except Exception as e:
             print(f"Error getting embeddings: {e}")
             return None

@@ -124,9 +124,9 @@ def demo_minimal_input():
     save_plan_to_file(plan, "minimal_plan.json")
 
 if __name__ == "__main__":
-    # Ensure OPEN_API_KEY is set
-    if not os.getenv("OPEN_API_KEY"):
-        print("Warning: OPEN_API_KEY environment variable is not set.")
+    # Ensure GEMINI_API_KEY is set
+    if not os.getenv("GEMINI_API_KEY"):
+        print("Warning: GEMINI_API_KEY environment variable is not set.")
         print("Please set it before running this script.")
         exit(1)
         

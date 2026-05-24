@@ -29,9 +29,8 @@ from ..agents.review_agent import TravelReviewer
 from dotenv import load_dotenv
 from langchain_core.output_parsers import JsonOutputParser
 from langchain.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
 from utils.utils import save_data_to_json
-from openai import OpenAI
+import google.generativeai as genai
 
 ROOT = Path(__file__).resolve().parent
 print(ROOT)
@@ -49,17 +48,16 @@ FORMAT_INSTRUCTIONS = (
 
 class PlanModel:
     def __init__(self, temperature: float = 1.0):
-        # self.llm = ChatOpenAI(
-        #     api_key=os.getenv("OPEN_API_KEY"), 
-        #     temperature=temperature,
-        #     model="gpt-4o",
-        #     max_tokens=4000  
-        # )
-        # try:
-        #     self.llm.model_rebuild()
-        # except Exception as e:
-        #     print(e)
-        self.llm = OpenAI(api_key=os.getenv("OPEN_API_KEY"))
+        gemini_api_key = os.getenv("GEMINI_API_KEY")
+        if not gemini_api_key:
+            raise ValueError("GEMINI_API_KEY is required")
+        genai.configure(api_key=gemini_api_key)
+        self.model_name = "gemini-3.5-flash"
+        self.llm = genai.GenerativeModel(
+            model_name=self.model_name,
+            system_instruction=system_plan_prompt
+        )
+        self.temperature = temperature
         self.parser = JsonOutputParser()
         self.review_agent = TravelReviewer()
         
@@ -309,19 +307,14 @@ class PlanModel:
                 
                 day_prompt = self._build_day_prompt(day_num, current_date_str, merged_data)
                 
-                messages = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": day_prompt}
-                ]
-                
                 try:
-                    # day_response = self.llm.invoke(messages)
-                    day_response = self.llm.responses.create(
-                        model="gpt-4.1",
-                        input=messages
+                    day_response = self.llm.generate_content(
+                        day_prompt,
+                        generation_config=genai.types.GenerationConfig(
+                            temperature=self.temperature
+                        )
                     )
-                    # day_response_content = day_response.content if hasattr(day_response, 'content') else day_response
-                    day_response_content = day_response.output_text if hasattr(day_response, 'output_text') else day_response
+                    day_response_content = day_response.text if day_response and day_response.text else ""
                     
                     day_response_content = self._cleanup_llm_response(day_response_content)
                     
