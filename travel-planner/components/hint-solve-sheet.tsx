@@ -12,7 +12,7 @@ import {
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 
-import * as mockApi from "@/lib/mock-api";
+import * as mockApi from "@/lib/api-client";
 import type { Activity, TravelPreference } from "@/lib/types";
 import { StarRating } from "./star-rating";
 

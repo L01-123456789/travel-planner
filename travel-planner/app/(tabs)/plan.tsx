@@ -14,7 +14,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { ActivityDetailSheet } from "@/components/activity-detail-sheet";
 import { HintSolveSheet } from "@/components/hint-solve-sheet";
-import * as mockApi from "@/lib/mock-api";
+import * as mockApi from "@/lib/api-client";
 import type { Activity, Trip } from "@/lib/types";
 
 const ACCENT = "#0B7D4E";

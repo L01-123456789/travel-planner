@@ -27,7 +27,7 @@ class TravelReviewer:
             raise ValueError("Gemini API key is required")
         
         genai.configure(api_key=self.gemini_api_key)
-        self.model_name = "gemini-3.5-flash"
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.model = genai.GenerativeModel(model_name=self.model_name)
 
     def _generate_text(self, prompt: str, max_output_tokens: Optional[int] = None, temperature: float = 0.7) -> str:

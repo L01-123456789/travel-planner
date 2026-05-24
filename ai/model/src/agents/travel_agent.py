@@ -42,7 +42,7 @@ class TravelModel:
         if not self.gemini_api_key:
             raise ValueError("GEMINI_API_KEY is required")
         genai.configure(api_key=self.gemini_api_key)
-        self.model_name = "gemini-3.5-flash"
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.model = genai.GenerativeModel(
             model_name=self.model_name,
             system_instruction=travel_suggestion_system_prompt
@@ -281,13 +281,8 @@ class TravelModel:
             logger.info(f"Added {len(restaurant_ids)} restaurant recommendations")
             
             if not formatted_results:
-                logger.warning("No recommendations found, using fallback suggestions")
-                formatted_results = [
-                    {"name": "Luxury Hotel", "type": "accommodation", "args": "luxury", "id": "hotel_000001"},
-                    {"name": "City Museum", "type": "place", "args": "cultural", "id": "place_000001"},
-                    {"name": "Local Restaurant", "type": "restaurant", "args": "local cuisine", "id": "restaurant_000001"}
-                ]
-            
+                logger.warning("No recommendations from vector DB; suggest_api will fill from mock data per-type")
+
             hotel_count = sum(1 for r in formatted_results if r["type"] == "accommodation")
             place_count = sum(1 for r in formatted_results if r["type"] == "place")
             restaurant_count = sum(1 for r in formatted_results if r["type"] == "restaurant")
@@ -298,11 +293,7 @@ class TravelModel:
             
         except Exception as e:
             logger.error(f"Error in process_query: {e}", exc_info=True)
-            return [
-                {"name": "Luxury Hotel", "type": "accommodation", "args": "luxury", "id": "hotel_000001"},
-                {"name": "City Museum", "type": "place", "args": "cultural", "id": "place_000001"},
-                {"name": "Local Restaurant", "type": "restaurant", "args": "local cuisine", "id": "restaurant_000001"}
-            ]
+            return []
             
     def _process_function_call(self, function_name: str, args: Dict[str, Any], results: Dict[str, Any]):
         """Helper method to process a function call and update results"""

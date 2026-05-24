@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 
-import * as mockApi from "@/lib/mock-api";
+import * as mockApi from "@/lib/api-client";
 import * as authStore from "@/lib/auth-store";
 
 const ACCENT = "#0B7D4E";

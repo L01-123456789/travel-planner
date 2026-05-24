@@ -52,7 +52,7 @@ class PlanModel:
         if not gemini_api_key:
             raise ValueError("GEMINI_API_KEY is required")
         genai.configure(api_key=gemini_api_key)
-        self.model_name = "gemini-3.5-flash"
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.llm = genai.GenerativeModel(
             model_name=self.model_name,
             system_instruction=system_plan_prompt

@@ -100,7 +100,7 @@ async def suggest_trips(request: TripSuggestionRequest):
             travel_model = TravelModel(destination_id=request.destination_id)
             raw_recommendations = travel_model.process_query(query)
         except Exception as e:
-            logger.error(f"Travel model failed: {str(e)}", exc_info=True)
+            logger.error(f"Travel model init/query failed, will use mock fallback: {str(e)}", exc_info=True)
             raw_recommendations = []
         
         logger.info(f"Recommendation query processed successfully, got {len(raw_recommendations)} items")

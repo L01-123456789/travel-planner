@@ -46,7 +46,7 @@ class CommentAgent:
         self.database_connected = False
         
         self.gemini_api_key = os.getenv("GEMINI_API_KEY", "")
-        self.model_name = "gemini-3.5-flash"
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.model = None
         if self.gemini_api_key:
             try:

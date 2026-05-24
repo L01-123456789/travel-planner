@@ -6,6 +6,7 @@ import sys
 import logging
 from datetime import datetime, timedelta
 from src.agents.plan_agent import PlanModel
+from src.agents.comment_agent import CommentAgent
 from src.utils.logger import setup_logger
 from src.utils.helper_function import to_dict
 from src.models import (
@@ -14,7 +15,42 @@ from src.models import (
     SimpleTripPlanRequest
 )
 from dotenv import load_dotenv
-model = PlanModel()
+
+try:
+    model = PlanModel()
+    _PLAN_MODEL_OK = True
+except Exception as _e:
+    model = None
+    _PLAN_MODEL_OK = False
+
+
+def _mock_plan(destination: str, meta: dict) -> dict:
+    """Build a 3-day mock plan when PlanModel/Pinecone is unavailable."""
+    mock_agent = CommentAgent(use_mock_data=True)
+    days = []
+    for i in range(3):
+        d = (datetime.strptime(meta["start_date"], "%Y-%m-%d") + timedelta(days=i)).strftime("%Y-%m-%d")
+        places = mock_agent.get_mock_suggestions("place", destination=destination, count=2)
+        rests = mock_agent.get_mock_suggestions("restaurant", destination=destination, count=2)
+        days.append({
+            "date": d,
+            "day_title": f"Ngày {i+1}",
+            "segments": [
+                {"time_of_day": "morning", "activities": (places[:1] + rests[:1])},
+                {"time_of_day": "afternoon", "activities": places[1:2]},
+                {"time_of_day": "evening", "activities": rests[1:2]},
+            ],
+            "daily_tips": "Lịch trình mẫu (mock) khi cơ sở dữ liệu vector không có dữ liệu.",
+        })
+    return {
+        "trip_name": meta["trip_name"],
+        "start_date": meta["start_date"],
+        "end_date": meta["end_date"],
+        "user_id": meta["user_id"],
+        "destination_id": destination,
+        "plan_by_day": days,
+    }
+
 logger = setup_logger(__name__)
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -80,7 +116,18 @@ async def get_trip_plan(request: dict):
         }
         
         logger.info(f"Generating plan with destination: {destination}")
-        result = model.generate_plan(input_data, **meta)
+        if not _PLAN_MODEL_OK or model is None:
+            logger.warning("PlanModel unavailable, returning mock plan")
+            result = _mock_plan(destination, meta)
+        else:
+            try:
+                result = model.generate_plan(input_data, **meta)
+                if not result or not result.get("plan_by_day"):
+                    logger.warning("PlanModel returned empty plan, falling back to mock")
+                    result = _mock_plan(destination, meta)
+            except Exception as plan_err:
+                logger.error(f"PlanModel failed, using mock plan: {plan_err}", exc_info=True)
+                result = _mock_plan(destination, meta)
 
         def standardize_activity(activity):
             activity_type = activity.get("type", "")

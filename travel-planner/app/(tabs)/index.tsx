@@ -13,7 +13,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import * as mockApi from "@/lib/mock-api";
+import * as mockApi from "@/lib/api-client";
 import { resetOnboardingState } from "@/lib/onboarding-store";
 import type { Trip } from "@/lib/types";
 
