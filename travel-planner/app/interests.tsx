@@ -168,8 +168,7 @@ export default function InterestsScreen() {
         <View style={styles.quoteCard}>
           <Ionicons name="quote" size={20} color={ACCENT} />
           <Text style={styles.quoteText}>
-            "Hành trình không chỉ là việc đến một vùng đất mới, mà là cách chúng
-            ta nhìn thấy thế giới qua những lăng kính khác nhau."
+            &quot;Hành trình không chỉ là việc đến một vùng đất mới, mà là cách chúng ta nhìn thấy thế giới qua những lăng kính khác nhau.&quot;
           </Text>
         </View>
 
