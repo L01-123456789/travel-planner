@@ -185,7 +185,9 @@ export function ActivityDetailSheet({ visible, activity, onClose, onRequestHintS
                       <Text style={styles.reviewAuthor}>{r.author}</Text>
                       <StarRating rating={r.rating} size={11} showNumber={false} />
                     </View>
-                    <Text style={styles.reviewText}>"{r.comment}"</Text>
+                   <Text style={styles.reviewText}>
+                    {'"'}{r.comment}{'"'}
+                  </Text>
                   </View>
                 ))}
               </View>
