@@ -21,7 +21,7 @@ import { PRESENT_MODE } from "./presentation";
 
 const delay = (ms = 300) => new Promise((r) => setTimeout(r, ms));
 const uid = (prefix = "id") =>
-  `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  `${prefix}-${Date.now().toString(36)}-${crypto.getRandomValues().toString(36).slice(2, 8)}`;
 
 const PLACE_POOL: Activity[] = [
   {
@@ -299,7 +299,7 @@ function pickActivity(type: ActivityType, used: Set<string>, maxPrice: number): 
   const pool = POOLS[type];
   const available = pool.filter((a) => !used.has(a.id) && a.priceEstimate <= maxPrice * 0.6);
   const choices = available.length ? available : pool.filter((a) => !used.has(a.id));
-  const pick = (choices.length ? choices : pool)[Math.floor(Math.random() * (choices.length || pool.length))];
+  const pick = (choices.length ? choices : pool)[Math.floor(crypto.getRandomValues() * (choices.length || pool.length))];
   used.add(pick.id);
   return { ...pick, activityId: uid("act") };
 }
@@ -484,7 +484,7 @@ export async function fixActivity(req: FixActivityRequest): Promise<FixActivityR
       if (cheapHint && a.priceEstimate < req.activity.priceEstimate) score += 5;
       if (quietHint && (a.reviewCount ?? 0) < 5000) score += 3;
       if (a.priceEstimate <= maxBudget) score += 1;
-      score += Math.random();
+      score += crypto.getRandomValues();
       return { activity: a, score };
     })
     .sort((a, b) => b.score - a.score)
