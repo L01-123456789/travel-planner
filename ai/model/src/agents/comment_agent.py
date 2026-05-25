@@ -7,10 +7,7 @@ from datetime import datetime
 import time
 import random
 
-try:
-    from openai import OpenAI
-except ImportError:
-    print("Warning: OpenAI package not found. Please install with: pip install openai")
+import google.generativeai as genai
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
@@ -48,15 +45,17 @@ class CommentAgent:
         
         self.database_connected = False
         
-        self.openai_api_key = os.getenv("OPEN_API_KEY", "")
-        self.client = None
-        if self.openai_api_key:
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY", "")
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = None
+        if self.gemini_api_key:
             try:
-                self.client = OpenAI(api_key=self.openai_api_key)
+                genai.configure(api_key=self.gemini_api_key)
+                self.model = genai.GenerativeModel(model_name=self.model_name)
             except Exception as e:
-                print(f"Warning: Failed to initialize OpenAI client: {e}")
+                print(f"Warning: Failed to initialize Gemini client: {e}")
         else:
-            print(f"Warning: OPEN_API_KEY not found in {ENV_PATH}")
+            print(f"Warning: GEMINI_API_KEY not found in {ENV_PATH}")
             
         # Initialize priority scores for different features
         self.priority_scores = {
@@ -297,6 +296,10 @@ class CommentAgent:
         results = sorted(results, key=lambda x: x["score"], reverse=True)
         
         return results
+
+    def get_mock_suggestions(self, suggestion_type, destination="Hà Nội", count=5, query=""):
+        """Public helper to get mock suggestions when Pinecone is limited."""
+        return self._generate_mock_suggestions(query, suggestion_type, destination, count)
     
     def _get_suggestions_by_type(self, data, query, suggestion_type):
         """Get suggestions for a specific type"""
@@ -559,17 +562,14 @@ class CommentAgent:
                     "retain_features": []
                 }
             
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": f"Phân tích các bình luận này để tìm yêu cầu thay đổi: {comment_text}"}
-                ],
-                response_format={"type": "json_object"}
-            )
-            
             try:
-                analysis = json.loads(response.choices[0].message.content)
+                response_text = self._generate_text(
+                    system_message,
+                    f"Phân tích các bình luận này để tìm yêu cầu thay đổi: {comment_text}",
+                    max_output_tokens=400,
+                    temperature=0.2
+                )
+                analysis = json.loads(response_text)
                 return analysis
             except Exception as je:
                 print(f"Error parsing JSON from LLM: {je}")
@@ -850,16 +850,14 @@ class CommentAgent:
             Không sử dụng ngôn ngữ quảng cáo hoặc phóng đại. Đảm bảo đầy đủ các ý.
             """
             
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "Bạn là chuyên gia du lịch tạo ra các mô tả chính xác và hữu ích bằng tiếng Việt."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=300
+            response_text = self._generate_text(
+                "Bạn là chuyên gia du lịch tạo ra các mô tả chính xác và hữu ích bằng tiếng Việt.",
+                prompt,
+                max_output_tokens=300,
+                temperature=0.7
             )
             
-            return response.choices[0].message.content.strip()
+            return response_text.strip()
             
         except Exception as e:
             print(f"Error generating description: {e}")
@@ -898,16 +896,14 @@ class CommentAgent:
             Ví dụ: 250000
             """
             
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Bạn là chuyên gia về giá cả du lịch. Chỉ trả lời bằng một con số."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=10
+            response_text = self._generate_text(
+                "Bạn là chuyên gia về giá cả du lịch. Chỉ trả lời bằng một con số.",
+                prompt,
+                max_output_tokens=20,
+                temperature=0.2
             )
             
-            price_str = response.choices[0].message.content.strip()
+            price_str = response_text.strip()
             price_str = ''.join(c for c in price_str if c.isdigit())
             if price_str:
                 return float(price_str)
@@ -958,21 +954,38 @@ class CommentAgent:
             
         return suggestion_list
 
+    def _generate_text(self, system_prompt: str, user_prompt: str, max_output_tokens: Optional[int] = None, temperature: float = 0.7) -> str:
+        """Generate text with Gemini using a combined system and user prompt."""
+        self._initialize_llm()
+        prompt = f"{system_prompt}\n\n{user_prompt}".strip()
+        try:
+            response = self.model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_output_tokens
+                )
+            )
+            return response.text.strip() if response and response.text else ""
+        except Exception as e:
+            print(f"Error generating text: {e}")
+            return ""
+
     def _initialize_llm(self):
-        """Initialize the OpenAI client if not already initialized."""
-        if self.client is not None:
+        """Initialize the Gemini client if not already initialized."""
+        if self.model is not None:
             return
         
-        # Try to initialize the client
-        self.openai_api_key = os.getenv("OPEN_API_KEY", "")
-        if not self.openai_api_key:
-            print(f"Warning: OPEN_API_KEY not found in {ENV_PATH}")
-            raise ValueError("OpenAI API key not found")
-            
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY", "")
+        if not self.gemini_api_key:
+            print(f"Warning: GEMINI_API_KEY not found in {ENV_PATH}")
+            raise ValueError("Gemini API key not found")
+        
         try:
-            self.client = OpenAI(api_key=self.openai_api_key)
+            genai.configure(api_key=self.gemini_api_key)
+            self.model = genai.GenerativeModel(model_name=self.model_name)
         except Exception as e:
-            print(f"Error initializing OpenAI client: {e}")
+            print(f"Error initializing Gemini client: {e}")
             raise
 
 def main():

@@ -9,40 +9,40 @@ src_dir = current_dir.parent
 sys.path.append(str(src_dir))
 
 from promts import system_review_promt, few_shot_review_promt, reviewer_promt, note_promt, summary_tips_promt
-from langchain.agents import initialize_agent, AgentType
-from langchain.tools import Tool
-from langchain.chat_models import ChatOpenAI
-from langchain.tools.tavily_search import TavilySearchResults
-from langchain.memory import ConversationBufferMemory
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class TravelReviewer:
-    def __init__(self, openai_api_key: Optional[str] = None, tavily_api_key: Optional[str] = None):
+    def __init__(self, gemini_api_key: Optional[str] = None):
         """
         Initialize the TravelReviewer agent.
         
         Args:
-            openai_api_key: OpenAI API key (optional, will use env var if not provided)
-            tavily_api_key: Tavily API key (optional, will use env var if not provided)
+            gemini_api_key: Gemini API key (optional, will use env var if not provided)
         """
-        self.openai_api_key = openai_api_key or os.getenv("OPEN_API_KEY")
-        self.tavily_api_key = tavily_api_key or os.getenv("TAVILY_API_KEY")
+        self.gemini_api_key = gemini_api_key or os.getenv("GEMINI_API_KEY")
+        if not self.gemini_api_key:
+            raise ValueError("Gemini API key is required")
         
-        if not self.openai_api_key:
-            raise ValueError("OpenAI API key is required")
-        if not self.tavily_api_key:
-            raise ValueError("Tavily API key is required")
-            
-        self.llm = ChatOpenAI(
-            model="gpt-3.5-turbo",
-            openai_api_key=self.openai_api_key,
-            temperature=1.0
-        )
-        
-        self._setup_tools()
-        self._setup_agent()
+        genai.configure(api_key=self.gemini_api_key)
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = genai.GenerativeModel(model_name=self.model_name)
+
+    def _generate_text(self, prompt: str, max_output_tokens: Optional[int] = None, temperature: float = 0.7) -> str:
+        try:
+            response = self.model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_output_tokens
+                )
+            )
+            return response.text.strip() if response and response.text else ""
+        except Exception as e:
+            print(f"Error generating text: {str(e)}")
+            return ""
     def build_prompt_from_plan_agent(self, plan: dict) -> str:
         """Build prompts for reviewing and adding tips to each day in the travel plan.
         
@@ -107,38 +107,7 @@ class TravelReviewer:
         - Những điều cần lưu ý về văn hóa địa phương
         - Mẹo tiết kiệm chi phí
         - Cách tránh các tình huống khó khăn thường gặp"""
-        return self.llm.predict(prompt)    
-    def _setup_tools(self):
-        """Set up the tools for the agent."""
-        self.search_tool = TavilySearchResults(
-            api_key=self.tavily_api_key,
-            max_results=2
-        )
-        self.tip_extractor_tool = Tool.from_function(
-            func=self.extract_travel_tips_from_text,
-            name="TipExtractor",
-            description="Extract practical travel tips from travel articles or descriptions."
-        )
-        self.tools = [self.search_tool, self.tip_extractor_tool]
-        
-    def _setup_agent(self):
-        """Set up the ReAct agent with tools and memory."""
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history",
-            return_messages=True
-        )
-        
-        system_prompt = system_review_promt
-
-        self.agent = initialize_agent(
-            tools=self.tools,
-            llm=self.llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=True,
-            memory=self.memory,
-            handle_parsing_errors=True,
-            system_message=system_prompt
-        )
+        return self._generate_text(prompt, max_output_tokens=300, temperature=0.7)
         
     def get_travel_tips(self, query: str) -> List[str]:
         """
@@ -151,7 +120,7 @@ class TravelReviewer:
             List of travel tips
         """
         try:
-            result = self.agent.run(query)
+            result = self._generate_text(query, max_output_tokens=400, temperature=0.7)
             tips = [tip.strip() for tip in result.split('\n') if tip.strip()]
             return tips
         except Exception as e:
@@ -190,7 +159,7 @@ class TravelReviewer:
         """
         
         try:
-            price_str = self.llm.predict(prompt).strip()
+            price_str = self._generate_text(prompt, max_output_tokens=20, temperature=0.2).strip()
             price_str = ''.join(c for c in price_str if c.isdigit())
             if price_str:
                 return float(price_str)
@@ -218,7 +187,7 @@ class TravelReviewer:
         """
         
         try:
-            result = self.llm.predict(prompt)
+            result = self._generate_text(prompt, max_output_tokens=200, temperature=0.4)
             tips = [tip.strip() for tip in result.split('\n') if tip.strip()]
             tips = [tip for tip in tips if not tip.startswith('#') and not tip.startswith('*') and len(tip) > 10]
             return tips

@@ -1,5 +1,5 @@
 import os
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 from ..vector_database import HotelVectorDatabase, PlaceVectorDatabase, FnBVectorDatabase
 from ..promts.travel_promt import travel_suggestion_system_prompt
@@ -36,10 +36,17 @@ def remove_duplicate_by_name(matches):
 class TravelModel:
     def __init__(self, destination_id: Optional[str] = None):
         """
-        Initialize the travel model with OpenAI API key
+        Initialize the travel model with Gemini API key
         """
-        self.openai_client = OpenAI(api_key=os.getenv("OPEN_API_KEY"))
-        self.model = "gpt-4.1-mini-2025-04-14"
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY")
+        if not self.gemini_api_key:
+            raise ValueError("GEMINI_API_KEY is required")
+        genai.configure(api_key=self.gemini_api_key)
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.model = genai.GenerativeModel(
+            model_name=self.model_name,
+            system_instruction=travel_suggestion_system_prompt
+        )
         self.destination_id = destination_id
 
         logger.info("Setting up all databases...")
@@ -217,44 +224,13 @@ class TravelModel:
         try:
             logger.info(f"Processing query: {user_query}")
             
-            messages = [
-                {
-                    "role": "system", 
-                    "content": travel_suggestion_system_prompt
-                },
-                {"role": "user", "content": user_query}
-            ]
+            logger.debug("Sending request to Gemini...")
+            response = self.model.generate_content(user_query)
+            response_text = response.text.strip() if response and response.text else ""
+            logger.info(f"Gemini response: {response_text}")
             
-            logger.debug("Sending request to OpenAI...")
-            response = self.openai_client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                functions=self.get_available_functions(),
-                function_call="auto"
-            )
-            logger.info(f"OpenAI response: {response}")
-            
-            response_message = response.choices[0].message
-            logger.info(f"Model response message: {response_message}")
-            
-            search_context = user_query
-            if response_message.function_call:
-                function_name = response_message.function_call.name
-                function_args = eval(response_message.function_call.arguments)
-                logger.info(f"Function call: {function_name}")
-                logger.debug(f"Function arguments: {function_args}")
-                
-                if "query_text" in function_args:
-                    search_context = function_args.get("query_text", user_query)
-                    
-                # Set appropriate top_k based on function type
-                if function_name == "query_hotels":
-                    top_k = min(function_args.get("top_k", 15), 15)
-                else:
-                    top_k = min(function_args.get("top_k", 50), 50)
-            else:
-                # Default to maximum allowed values
-                top_k = 50
+            search_context = response_text or user_query
+            top_k = 50
                 
             logger.info("Querying all databases with context")
             
@@ -305,13 +281,8 @@ class TravelModel:
             logger.info(f"Added {len(restaurant_ids)} restaurant recommendations")
             
             if not formatted_results:
-                logger.warning("No recommendations found, using fallback suggestions")
-                formatted_results = [
-                    {"name": "Luxury Hotel", "type": "accommodation", "args": "luxury", "id": "hotel_000001"},
-                    {"name": "City Museum", "type": "place", "args": "cultural", "id": "place_000001"},
-                    {"name": "Local Restaurant", "type": "restaurant", "args": "local cuisine", "id": "restaurant_000001"}
-                ]
-            
+                logger.warning("No recommendations from vector DB; suggest_api will fill from mock data per-type")
+
             hotel_count = sum(1 for r in formatted_results if r["type"] == "accommodation")
             place_count = sum(1 for r in formatted_results if r["type"] == "place")
             restaurant_count = sum(1 for r in formatted_results if r["type"] == "restaurant")
@@ -322,11 +293,7 @@ class TravelModel:
             
         except Exception as e:
             logger.error(f"Error in process_query: {e}", exc_info=True)
-            return [
-                {"name": "Luxury Hotel", "type": "accommodation", "args": "luxury", "id": "hotel_000001"},
-                {"name": "City Museum", "type": "place", "args": "cultural", "id": "place_000001"},
-                {"name": "Local Restaurant", "type": "restaurant", "args": "local cuisine", "id": "restaurant_000001"}
-            ]
+            return []
             
     def _process_function_call(self, function_name: str, args: Dict[str, Any], results: Dict[str, Any]):
         """Helper method to process a function call and update results"""

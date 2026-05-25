@@ -5,6 +5,7 @@ import sys
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from src.agents.travel_agent import TravelModel
+from src.agents.comment_agent import CommentAgent
 from src.utils.logger import setup_logger
 from src.models.request_models import TripSuggestionRequest
 from src.models.reponse_models import SuggestWithIDAndType
@@ -95,8 +96,12 @@ async def suggest_trips(request: TripSuggestionRequest):
         
         logger.info(f"Processing recommendation query for {request.destination_id}")
         
-        travel_model = TravelModel(destination_id=request.destination_id)
-        raw_recommendations = travel_model.process_query(query)
+        try:
+            travel_model = TravelModel(destination_id=request.destination_id)
+            raw_recommendations = travel_model.process_query(query)
+        except Exception as e:
+            logger.error(f"Travel model init/query failed, will use mock fallback: {str(e)}", exc_info=True)
+            raw_recommendations = []
         
         logger.info(f"Recommendation query processed successfully, got {len(raw_recommendations)} items")
         
@@ -106,12 +111,26 @@ async def suggest_trips(request: TripSuggestionRequest):
         
         logger.info(f"Grouped recommendations: {len(accommodations)} accommodations, {len(places)} places, {len(restaurants)} restaurants")
         
+        mock_agent = CommentAgent(use_mock_data=True)
+
         if not accommodations:
-            accommodations = [{"name": "Luxury Hotel", "type": "accommodation", "args": "luxury", "id": "hotel_000003"}]
+            mock_hotels = mock_agent.get_mock_suggestions("hotel", destination=request.destination_id, count=5, query=query)
+            accommodations = [
+                {"name": h.get("name", "Mock Hotel"), "type": "accommodation", "args": "hotel", "id": h.get("id", "hotel_mock")}
+                for h in mock_hotels
+            ]
         if not places:
-            places = [{"name": "City Museum", "type": "place", "args": "cultural", "id": "place_000003"}]
+            mock_places = mock_agent.get_mock_suggestions("place", destination=request.destination_id, count=5, query=query)
+            places = [
+                {"name": p.get("name", "Mock Place"), "type": "place", "args": "place", "id": p.get("id", "place_mock")}
+                for p in mock_places
+            ]
         if not restaurants:
-            restaurants = [{"name": "Local Restaurant", "type": "restaurant", "args": "local cuisine", "id": "restaurant_000003"}]
+            mock_restaurants = mock_agent.get_mock_suggestions("restaurant", destination=request.destination_id, count=5, query=query)
+            restaurants = [
+                {"name": r.get("name", "Mock Restaurant"), "type": "restaurant", "args": "restaurant", "id": r.get("id", "restaurant_mock")}
+                for r in mock_restaurants
+            ]
             
         response = []
         for rec in accommodations + places + restaurants:

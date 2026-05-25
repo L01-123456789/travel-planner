@@ -1,112 +1,210 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import {
+  resetOnboardingState,
+  updateOnboardingState,
+} from "@/lib/onboarding-store";
 
-export default function TabTwoScreen() {
+const ACCENT = "#0B7D4E";
+const TEXT_DARK = "#1F2328";
+const TEXT_MUTED = "#6F7780";
+const SURFACE = "#FFFFFF";
+const BORDER = "#E4E8EB";
+
+export default function ExploreScreen() {
+  const router = useRouter();
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(
+    null,
+  );
+
+  const destinations = [
+    { id: "hanoi", name: "Hà Nội", meta: "3 ngày · Ẩm thực" },
+    { id: "danang", name: "Đà Nẵng", meta: "4 ngày · Biển" },
+    { id: "dalat", name: "Đà Lạt", meta: "3 ngày · Nghỉ dưỡng" },
+    { id: "hochiminh", name: "TP. Hồ Chí Minh", meta: "2 ngày · Thành phố" },
+  ];
+
+  const handleCreateTrip = () => {
+    if (!selectedDestination) {
+      return;
+    }
+    resetOnboardingState();
+    const chosen = destinations.find((item) => item.id === selectedDestination);
+    if (chosen) {
+      updateOnboardingState({
+        destination: { id: chosen.id, name: chosen.name },
+      });
+    }
+    router.push("/trip-info");
+  };
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Chuyến đi</Text>
+        <Pressable style={styles.iconButton}>
+          <Ionicons name="options" size={18} color={ACCENT} />
+        </Pressable>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Bắt đầu hành trình mới</Text>
+        <Text style={styles.cardSubtitle}>
+          Chọn điểm đến và tuỳ chỉnh trải nghiệm phù hợp với bạn.
+        </Text>
+        <Pressable
+          style={[
+            styles.primaryButton,
+            !selectedDestination ? styles.primaryButtonDisabled : null,
+          ]}
+          onPress={handleCreateTrip}
+          disabled={!selectedDestination}
+        >
+          <Text style={styles.primaryButtonText}>Tạo chuyến đi</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Gợi ý cho bạn</Text>
+        <View style={styles.suggestionRow}>
+          {destinations.map((item) => {
+            const isSelected = selectedDestination === item.id;
+            return (
+              <Pressable
+                key={item.id}
+                style={[
+                  styles.suggestionCard,
+                  isSelected ? styles.suggestionCardSelected : null,
+                ]}
+                onPress={() => setSelectedDestination(item.id)}
+              >
+                <View style={styles.suggestionHeader}>
+                  <Text style={styles.suggestionTitle}>{item.name}</Text>
+                  {isSelected ? (
+                    <View style={styles.selectedBadge}>
+                      <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={styles.suggestionMeta}>{item.meta}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  screen: {
+    flex: 1,
+    backgroundColor: "#F7F8F7",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  content: {
+    padding: 20,
+    gap: 20,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: TEXT_DARK,
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EFF4F1",
+  },
+  card: {
+    backgroundColor: SURFACE,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: 18,
+    gap: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: TEXT_DARK,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: TEXT_MUTED,
+    lineHeight: 20,
+  },
+  primaryButton: {
+    marginTop: 6,
+    backgroundColor: ACCENT,
+    borderRadius: 24,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  primaryButtonDisabled: {
+    opacity: 0.6,
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  section: {
+    gap: 12,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: TEXT_DARK,
+  },
+  suggestionRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  suggestionCard: {
+    width: "48%",
+    backgroundColor: SURFACE,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: 14,
+    gap: 6,
+  },
+  suggestionCardSelected: {
+    borderColor: ACCENT,
+    backgroundColor: "#F1F8F4",
+  },
+  suggestionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 6,
+  },
+  selectedBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: ACCENT,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  suggestionTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: TEXT_DARK,
+  },
+  suggestionMeta: {
+    fontSize: 12,
+    color: TEXT_MUTED,
   },
 });

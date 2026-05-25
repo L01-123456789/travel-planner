@@ -16,6 +16,47 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+## Sentry (assignment)
+
+This project is configured to use the supported Sentry SDK for Expo (`@sentry/react-native`).
+
+### Step-by-step
+
+1. Create a Sentry project (React Native) and copy the DSN.
+2. Create a local env file (do not commit) using `.env.example` as a template.
+   - Set `EXPO_PUBLIC_SENTRY_DSN=...`
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the app:
+
+   ```bash
+   npx expo start
+   ```
+
+5. In the Home screen, use **Sentry Demo (for assignment)**:
+   - **Send test error** → should appear in Sentry **Issues**.
+   - **Send test performance trace** → should appear in Sentry **Performance**.
+
+### What to submit
+
+- Link to your Sentry Project.
+- Screenshot showing at least:
+  - 1 Issue (with stack trace)
+  - 1 Performance transaction/trace
+
+## Backend API demo screen
+
+There is a quick demo UI in the **API Demo** tab (Explore) that calls the Go backend.
+
+- Start backend (see [backend/README.md](../backend/README.md)). Default base URL: `http://localhost:8080/api/v1`
+- In `.env`, set `EXPO_PUBLIC_API_BASE_URL` so the mobile app can reach your backend.
+  - Android emulator: `http://10.0.2.2:8080/api/v1`
+  - Physical device: `http://<your-pc-lan-ip>:8080/api/v1`
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
