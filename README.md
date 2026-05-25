@@ -2,7 +2,7 @@
 
 ## Wiki
 
-The project wiki is available at **[WIKI.md](./WIKI.md)**.
+The project wiki is available at **[WIKI](https://github.com/L01-123456789/travel-planner/wiki)**.
 
 ### Images
 
